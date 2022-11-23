@@ -313,21 +313,39 @@ function sleep(ms) {
     });
 
     await TouchGestures.onTap(space).subscribe(() => {
+        string1 = string1.substring(0, string1.length - 1)
+        textObject.text = string1
         string1 = string1 + " "
         textObject.text = string1
+        string1 = string1 + "|"
+        sleep(time).then(() => {
+            textObject.text = string1
+        });
     });
 
     await TouchGestures.onTap(ret).subscribe(() => {
+        string1 = string1.substring(0, string1.length - 1)
+        textObject.text = string1
         string1 = string1 + "\n"
         textObject.text = string1
+        string1 = string1 + "|"
+        sleep(time).then(() => {
+            textObject.text = string1
+        });
     });
 
     await TouchGestures.onTap(del).subscribe(() => {
+        string1 = string1.substring(0, string1.length - 1)
+        textObject.text = string1
         if (string1.slice(-1) === "\n") {
             string1 = string1.substring(0, string1.length - 2)
         } else {
             string1 = string1.substring(0, string1.length - 1)
         }
         textObject.text = string1
+        string1 = string1 + "|"
+        sleep(time).then(() => {
+            textObject.text = string1
+        });
     });
 })();
