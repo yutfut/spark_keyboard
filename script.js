@@ -26,7 +26,7 @@ function check(checkString) {
     return checkString
 }
 
-function touch(sybbol, objectTxt) {
+function touch(sybbol, objectTxt, counter) {
     if (work) {
         string1 = string1.substring(0, string1.length - 1)
         objectTxt.text = string1
@@ -38,6 +38,7 @@ function touch(sybbol, objectTxt) {
             objectTxt.text = string1
         });
         string1 = check(string1)
+        counter.text = string1.length.toString()
     }
 }
 
@@ -73,101 +74,102 @@ function touch(sybbol, objectTxt) {
     const del = await Scene.root.findFirst('delete')
 
     const textObject = await Scene.root.findFirst('3dText0')
+    const counter = await Scene.root.findFirst('3dText1')
 
     await TouchGestures.onTap(a).subscribe(() => {
-        touch("A", textObject)
+        touch("A", textObject, counter)
     });
 
     await TouchGestures.onTap(b).subscribe(() => {
-        touch("B", textObject)
+        touch("B", textObject, counter)
     });
 
     await TouchGestures.onTap(c).subscribe(() => {
-        touch("С", textObject)
+        touch("С", textObject, counter)
     });
 
     await TouchGestures.onTap(d).subscribe(() => {
-        touch("D", textObject)
+        touch("D", textObject, counter)
     });
 
     await TouchGestures.onTap(e).subscribe(() => {
-        touch("E", textObject)
+        touch("E", textObject, counter)
     });
 
     await TouchGestures.onTap(f).subscribe(() => {
-        touch("F", textObject)
+        touch("F", textObject, counter)
     });
 
     await TouchGestures.onTap(g).subscribe(() => {
-        touch("G", textObject)
+        touch("G", textObject, counter)
     });
 
     await TouchGestures.onTap(h).subscribe(() => {
-        touch("H", textObject)
+        touch("H", textObject, counter)
     });
 
     await TouchGestures.onTap(i).subscribe(() => {
-        touch("I", textObject)
+        touch("I", textObject, counter)
     });
 
     await TouchGestures.onTap(j).subscribe(() => {
-        touch("J", textObject)
+        touch("J", textObject, counter)
     });
 
     await TouchGestures.onTap(k).subscribe(() => {
-        touch("K", textObject)
+        touch("K", textObject, counter)
     });
 
     await TouchGestures.onTap(l).subscribe(() => {
-        touch("L", textObject)
+        touch("L", textObject, counter)
     });
 
     await TouchGestures.onTap(m).subscribe(() => {
-        touch("M", textObject)
+        touch("M", textObject, counter)
     });
 
     await TouchGestures.onTap(n).subscribe(() => {
-        touch("N", textObject)
+        touch("N", textObject, counter)
     });
 
     await TouchGestures.onTap(o).subscribe(() => {
-        touch("O", textObject)
+        touch("O", textObject, counter)
     });
 
     await TouchGestures.onTap(p).subscribe(() => {
-        touch("P", textObject)
+        touch("P", textObject, counter)
     });
 
     await TouchGestures.onTap(r).subscribe(() => {
-        touch("R", textObject)
+        touch("R", textObject, counter)
     });
 
     await TouchGestures.onTap(s).subscribe(() => {
-        touch("S", textObject)
+        touch("S", textObject, counter)
     });
 
     await TouchGestures.onTap(t).subscribe(() => {
-        touch("T", textObject)
+        touch("T", textObject, counter)
     });
 
     await TouchGestures.onTap(u).subscribe(() => {
-        touch("U", textObject)
+        touch("U", textObject, counter)
     });
 
     await TouchGestures.onTap(w).subscribe(() => {
-        touch("W", textObject)
+        touch("W", textObject, counter)
     });
 
     await TouchGestures.onTap(x).subscribe(() => {
-        touch("X", textObject)
+        touch("X", textObject, counter)
     });
 
     await TouchGestures.onTap(y).subscribe(() => {
-        touch("Y", textObject)
+        touch("Y", textObject, counter)
     });
 
     await TouchGestures.onTap(z).subscribe(() => {
-        touch("Z", textObject)
+        touch("Z", textObject, counter)
     });
 
     await TouchGestures.onTap(space).subscribe(() => {
