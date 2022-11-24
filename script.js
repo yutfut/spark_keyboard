@@ -7,8 +7,13 @@ const TimeModule = require('Time');
 let work = true
 let string1 = "|"
 const time = 150
+
 const limitSymbol = 44
-let countReturn = 0
+
+let counterSymbol = 0
+let countSymbolString = [0, 0, 0, 0, 0]
+let nowString = 0
+
 
 
 function sleep(ms) {
@@ -16,9 +21,9 @@ function sleep(ms) {
 }
 
 function autoReturn(checkString) {
-    if (checkString.length === 14 || checkString.length === 29 || checkString.length === 44) {
+    if (countSymbolString[nowString] === 14) {
         checkString = checkString + "\n"
-        countReturn += 1
+        nowString += 1
     }
     return checkString
 }
@@ -31,19 +36,29 @@ function check(checkString) {
     return checkString
 }
 
-function touch(sybbol, objectTxt, counter) {
+function touch(symbol, objectTxt, counter) {
     if (work) {
         string1 = string1.substring(0, string1.length - 1)
         objectTxt.text = string1
-        string1 = string1 + sybbol
+
+        string1 += symbol
+
+        countSymbolString[nowString] += 1
+        counterSymbol += 1
+
         objectTxt.text = string1
+
         string1 = autoReturn(string1)
+
         string1 = string1 + "|"
         sleep(time).then(() => {
             objectTxt.text = string1
         });
         string1 = check(string1)
-        counter.text = (limitSymbol - (string1.length - 1) + countReturn).toString()
+
+        counter.text = (limitSymbol - counterSymbol).toString()
+        Diagnostics.log(countSymbolString)
+        Diagnostics.log(nowString)
     }
 }
 
@@ -197,7 +212,7 @@ function touch(sybbol, objectTxt, counter) {
             sleep(time).then(() => {
                 textObject.text = string1
             });
-            counter.text = (limitSymbol - (string1.length - 1) + countReturn).toString()
+            counter.text = (limitSymbol - counterSymbol).toString()
         }
     });
 
@@ -205,10 +220,14 @@ function touch(sybbol, objectTxt, counter) {
         if (work) {
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
+
             string1 = string1 + "\n"
-            countReturn += 1
+
+            nowString += 1
+
             textObject.text = string1
             string1 = string1 + "|"
+
             sleep(time).then(() => {
                 textObject.text = string1
             });
@@ -216,20 +235,26 @@ function touch(sybbol, objectTxt, counter) {
     });
 
     await TouchGestures.onTap(delet).subscribe(() => {
-        if (work) {
+        if (string1 !== "|") {
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
             if (string1.slice(-1) === "\n") {
                 string1 = string1.substring(0, string1.length - 2)
+                counterSymbol -= 1
+                nowString -= 1
+                countSymbolString[nowString] -=1
+
             } else {
                 string1 = string1.substring(0, string1.length - 1)
+                counterSymbol -= 1
+                countSymbolString[nowString] -=1
             }
             textObject.text = string1
             string1 = string1 + "|"
             sleep(time).then(() => {
                 textObject.text = string1
             });
-            counter.text = (limitSymbol - (string1.length - 1) + countReturn).toString()
+            counter.text = (limitSymbol - counterSymbol).toString()
         }
     });
 })();
