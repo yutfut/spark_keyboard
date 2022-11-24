@@ -5,7 +5,7 @@ const TimeModule = require('Time');
 const Patches = require('Patches')
 
 let work = true
-let limit = true
+let limit = false
 let string1 = "|"
 const time = 150
 
@@ -38,7 +38,7 @@ function check(checkString) {
 }
 
 function touch(symbol, objectTxt, counter) {
-    if (work && limit) {
+    if (work && !limit) {
         string1 = string1.substring(0, string1.length - 1)
         objectTxt.text = string1
 
@@ -300,7 +300,7 @@ function touch(symbol, objectTxt, counter) {
     await TouchGestures.onTap(done).subscribe(() => {
         if (work === true) {
             work = false
-            work_delete = false
+            limit = true
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
             return
@@ -308,7 +308,7 @@ function touch(symbol, objectTxt, counter) {
 
         if (work === false) {
             work = true
-            work_delete = true
+            limit = false
             string1 = string1 + "|"
             sleep(time).then(() => {
                 textObject.text = string1
