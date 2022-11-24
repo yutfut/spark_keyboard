@@ -42,14 +42,14 @@ function touch(symbol, objectTxt, counter) {
         string1 = string1.substring(0, string1.length - 1)
         objectTxt.text = string1
 
+        string1 = autoReturn(string1)
+
         string1 += symbol
 
         countSymbolString[nowString] += 1
         counterSymbol += 1
 
         objectTxt.text = string1
-
-        string1 = autoReturn(string1)
 
         string1 = string1 + "|"
         sleep(time).then(() => {
@@ -60,6 +60,8 @@ function touch(symbol, objectTxt, counter) {
         counter.text = (limitSymbol - counterSymbol).toString()
         Diagnostics.log(countSymbolString)
         Diagnostics.log(nowString)
+        Diagnostics.log(counterSymbol)
+        Diagnostics.log(string1)
     }
 }
 
@@ -216,6 +218,11 @@ function touch(symbol, objectTxt, counter) {
                 textObject.text = string1
             });
             counter.text = (limitSymbol - counterSymbol).toString()
+
+            Diagnostics.log(countSymbolString)
+            Diagnostics.log(nowString)
+            Diagnostics.log(limitSymbol)
+            Diagnostics.log(string1)
         }
     });
 
@@ -234,6 +241,11 @@ function touch(symbol, objectTxt, counter) {
             sleep(time).then(() => {
                 textObject.text = string1
             });
+
+            Diagnostics.log(countSymbolString)
+            Diagnostics.log(nowString)
+            Diagnostics.log(limitSymbol)
+            Diagnostics.log(string1)
         }
     });
 
@@ -245,12 +257,17 @@ function touch(symbol, objectTxt, counter) {
                 textObject.text = string1
             }
             if (string1.slice(-1) === "\n" && work) {
-                if (string1.slice(-2) === "\n") {
+                if (string1.slice(string1.slice(-1)-1) === "\n") {
+                    Diagnostics.log(string1)
+                    Diagnostics.log("che" + (-2).toString())
                     string1 = string1.substring(0, string1.length - 1)
-
+                    Diagnostics.log(string1)
                     nowString -= 1
                 } else {
+                    Diagnostics.log(string1)
+                    Diagnostics.log("che" + (-1).toString())
                     string1 = string1.substring(0, string1.length - 2)
+                    Diagnostics.log(string1)
 
                     counterSymbol -= 1
                     nowString -= 1
@@ -272,6 +289,11 @@ function touch(symbol, objectTxt, counter) {
                 textObject.text = string1
             });
             counter.text = (limitSymbol - counterSymbol).toString()
+
+            Diagnostics.log(countSymbolString)
+            Diagnostics.log(nowString)
+            Diagnostics.log(limitSymbol)
+            Diagnostics.log(string1)
         }
     });
 
