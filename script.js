@@ -5,6 +5,7 @@ const TimeModule = require('Time');
 
 
 let work = true
+let limit = true
 let string1 = "|"
 const time = 150
 
@@ -29,15 +30,15 @@ function autoReturn(checkString) {
 }
 
 function check(checkString) {
-    if (checkString.length === 48) {
+    if (counterSymbol === 44) {
         checkString = checkString.substring(0, checkString.length - 1)
-        work = false
+        limit = false
     }
     return checkString
 }
 
 function touch(symbol, objectTxt, counter) {
-    if (work) {
+    if (work && limit) {
         string1 = string1.substring(0, string1.length - 1)
         objectTxt.text = string1
 
@@ -237,10 +238,12 @@ function touch(symbol, objectTxt, counter) {
     });
 
     await TouchGestures.onTap(delet).subscribe(() => {
-        if (string1 !== "|" && work) {
-            string1 = string1.substring(0, string1.length - 1)
-            textObject.text = string1
-            if (string1.slice(-1) === "\n") {
+        if (string1 !== "|" && work || !limit) {
+            if (limit) {
+                string1 = string1.substring(0, string1.length - 1)
+                textObject.text = string1
+            }
+            if (string1.slice(-1) === "\n" && work) {
                 string1 = string1.substring(0, string1.length - 2)
                 counterSymbol -= 1
                 nowString -= 1
@@ -250,6 +253,10 @@ function touch(symbol, objectTxt, counter) {
                 string1 = string1.substring(0, string1.length - 1)
                 counterSymbol -= 1
                 countSymbolString[nowString] -=1
+
+            }
+            if (limit === false) {
+                limit = true
             }
             textObject.text = string1
             string1 = string1 + "|"
@@ -263,6 +270,7 @@ function touch(symbol, objectTxt, counter) {
     await TouchGestures.onTap(done).subscribe(() => {
         if (work === true) {
             work = false
+            work_delete = false
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
             return
@@ -270,6 +278,7 @@ function touch(symbol, objectTxt, counter) {
 
         if (work === false) {
             work = true
+            work_delete = true
             string1 = string1 + "|"
             sleep(time).then(() => {
                 textObject.text = string1
