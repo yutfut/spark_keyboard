@@ -94,6 +94,8 @@ function touch(symbol, objectTxt, counter) {
     const ret = await Scene.root.findFirst('return')
     const delet = await Scene.root.findFirst('delete')
 
+    const done = await Scene.root.findFirst('done')
+
     const textObject = await Scene.root.findFirst('3dText0')
     const counter = await Scene.root.findFirst('3dText1')
 
@@ -235,7 +237,7 @@ function touch(symbol, objectTxt, counter) {
     });
 
     await TouchGestures.onTap(delet).subscribe(() => {
-        if (string1 !== "|") {
+        if (string1 !== "|" && work) {
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
             if (string1.slice(-1) === "\n") {
@@ -255,6 +257,23 @@ function touch(symbol, objectTxt, counter) {
                 textObject.text = string1
             });
             counter.text = (limitSymbol - counterSymbol).toString()
+        }
+    });
+
+    await TouchGestures.onTap(done).subscribe(() => {
+        if (work === true) {
+            work = false
+            string1 = string1.substring(0, string1.length - 1)
+            textObject.text = string1
+            return
+        }
+
+        if (work === false) {
+            work = true
+            string1 = string1 + "|"
+            sleep(time).then(() => {
+                textObject.text = string1
+            });
         }
     });
 })();
