@@ -3,9 +3,13 @@ const TouchGestures = require('TouchGestures');
 const Diagnostics = require('Diagnostics');
 const TimeModule = require('Time');
 
+
 let work = true
 let string1 = "|"
 const time = 150
+const limitSymbol = 44
+let countReturn = 0
+
 
 function sleep(ms) {
     return new Promise(resolve => TimeModule.setTimeout(resolve, ms));
@@ -14,6 +18,7 @@ function sleep(ms) {
 function autoReturn(checkString) {
     if (checkString.length === 14 || checkString.length === 29 || checkString.length === 44) {
         checkString = checkString + "\n"
+        countReturn += 1
     }
     return checkString
 }
@@ -38,7 +43,7 @@ function touch(sybbol, objectTxt, counter) {
             objectTxt.text = string1
         });
         string1 = check(string1)
-        counter.text = (string1.length - 1).toString()
+        counter.text = (limitSymbol - (string1.length - 1) + countReturn).toString()
     }
 }
 
@@ -192,7 +197,7 @@ function touch(sybbol, objectTxt, counter) {
             sleep(time).then(() => {
                 textObject.text = string1
             });
-            counter.text = (string1.length - 1).toString()
+            counter.text = (limitSymbol - (string1.length - 1) + countReturn).toString()
         }
     });
 
@@ -201,6 +206,7 @@ function touch(sybbol, objectTxt, counter) {
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
             string1 = string1 + "\n"
+            countReturn += 1
             textObject.text = string1
             string1 = string1 + "|"
             sleep(time).then(() => {
@@ -223,7 +229,7 @@ function touch(sybbol, objectTxt, counter) {
             sleep(time).then(() => {
                 textObject.text = string1
             });
-            counter.text = (string1.length - 1).toString()
+            counter.text = (limitSymbol - (string1.length - 1) + countReturn).toString()
         }
     });
 })();
