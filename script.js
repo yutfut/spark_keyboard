@@ -38,7 +38,7 @@ function touch(sybbol, objectTxt, counter) {
             objectTxt.text = string1
         });
         string1 = check(string1)
-        counter.text = string1.length.toString()
+        counter.text = (string1.length - 1).toString()
     }
 }
 
@@ -59,6 +59,7 @@ function touch(sybbol, objectTxt, counter) {
     const n = await Scene.root.findFirst('letter_n')
     const o = await Scene.root.findFirst('letter_o')
     const p = await Scene.root.findFirst('letter_p')
+    const q = await Scene.root.findFirst('letter_q')
     const r = await Scene.root.findFirst('letter_r')
     const s = await Scene.root.findFirst('letter_s')
     const t = await Scene.root.findFirst('letter_t')
@@ -69,9 +70,9 @@ function touch(sybbol, objectTxt, counter) {
     const y = await Scene.root.findFirst('letter_y')
     const z = await Scene.root.findFirst('letter_z')
 
-    const space = await Scene.root.findFirst('space')
+    const sps = await Scene.root.findFirst('sps')
     const ret = await Scene.root.findFirst('return')
-    const del = await Scene.root.findFirst('delete')
+    const delet = await Scene.root.findFirst('delete')
 
     const textObject = await Scene.root.findFirst('3dText0')
     const counter = await Scene.root.findFirst('3dText1')
@@ -140,6 +141,10 @@ function touch(sybbol, objectTxt, counter) {
         touch("P", textObject, counter)
     });
 
+    await TouchGestures.onTap(q).subscribe(() => {
+        touch("Q", textObject, counter)
+    });
+
     await TouchGestures.onTap(r).subscribe(() => {
         touch("R", textObject, counter)
     });
@@ -154,6 +159,10 @@ function touch(sybbol, objectTxt, counter) {
 
     await TouchGestures.onTap(u).subscribe(() => {
         touch("U", textObject, counter)
+    });
+
+    await TouchGestures.onTap(v).subscribe(() => {
+        touch("V", textObject, counter)
     });
 
     await TouchGestures.onTap(w).subscribe(() => {
@@ -172,40 +181,50 @@ function touch(sybbol, objectTxt, counter) {
         touch("Z", textObject, counter)
     });
 
-    await TouchGestures.onTap(space).subscribe(() => {
-        string1 = string1.substring(0, string1.length - 1)
-        textObject.text = string1
-        string1 = string1 + " "
-        textObject.text = string1
-        string1 = string1 + "|"
-        sleep(time).then(() => {
+    await TouchGestures.onTap(sps).subscribe(() => {
+        if (work && string1 !== "|") {
+            string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
-        });
+            string1 = string1 + " "
+            textObject.text = string1
+            string1 = autoReturn(string1)
+            string1 = string1 + "|"
+            sleep(time).then(() => {
+                textObject.text = string1
+            });
+            counter.text = (string1.length - 1).toString()
+        }
     });
 
     await TouchGestures.onTap(ret).subscribe(() => {
-        string1 = string1.substring(0, string1.length - 1)
-        textObject.text = string1
-        string1 = string1 + "\n"
-        textObject.text = string1
-        string1 = string1 + "|"
-        sleep(time).then(() => {
+        if (work) {
+            string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
-        });
+            string1 = string1 + "\n"
+            textObject.text = string1
+            string1 = string1 + "|"
+            sleep(time).then(() => {
+                textObject.text = string1
+            });
+        }
     });
 
-    await TouchGestures.onTap(del).subscribe(() => {
-        string1 = string1.substring(0, string1.length - 1)
-        textObject.text = string1
-        if (string1.slice(-1) === "\n") {
-            string1 = string1.substring(0, string1.length - 2)
-        } else {
+    await TouchGestures.onTap(delet).subscribe(() => {
+        if (work) {
             string1 = string1.substring(0, string1.length - 1)
-        }
-        textObject.text = string1
-        string1 = string1 + "|"
-        sleep(time).then(() => {
             textObject.text = string1
-        });
+            if (string1.slice(-1) === "\n") {
+                string1 = string1.substring(0, string1.length - 2)
+            } else {
+                string1 = string1.substring(0, string1.length - 1)
+            }
+            textObject.text = string1
+            string1 = string1 + "|"
+            sleep(time).then(() => {
+                textObject.text = string1
+            });
+            counter.text = (string1.length - 1).toString()
+        }
     });
 })();
+
