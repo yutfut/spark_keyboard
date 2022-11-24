@@ -2,7 +2,7 @@ const Scene = require('Scene');
 const TouchGestures = require('TouchGestures');
 const Diagnostics = require('Diagnostics');
 const TimeModule = require('Time');
-
+const Patches = require('Patches')
 
 let work = true
 let limit = true
@@ -30,7 +30,7 @@ function autoReturn(checkString) {
 }
 
 function check(checkString) {
-    if (counterSymbol === 44) {
+    if (counterSymbol === limitSymbol) {
         checkString = checkString.substring(0, checkString.length - 1)
         limit = false
     }
@@ -239,15 +239,23 @@ function touch(symbol, objectTxt, counter) {
 
     await TouchGestures.onTap(delet).subscribe(() => {
         if (string1 !== "|" && work || !limit) {
+            Diagnostics.log(string1)
             if (limit) {
                 string1 = string1.substring(0, string1.length - 1)
                 textObject.text = string1
             }
             if (string1.slice(-1) === "\n" && work) {
-                string1 = string1.substring(0, string1.length - 2)
-                counterSymbol -= 1
-                nowString -= 1
-                countSymbolString[nowString] -=1
+                if (string1.slice(-2) === "\n") {
+                    string1 = string1.substring(0, string1.length - 1)
+
+                    nowString -= 1
+                } else {
+                    string1 = string1.substring(0, string1.length - 2)
+
+                    counterSymbol -= 1
+                    nowString -= 1
+                    countSymbolString[nowString] -=1
+                }
 
             } else {
                 string1 = string1.substring(0, string1.length - 1)
