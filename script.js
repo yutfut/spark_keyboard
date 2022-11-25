@@ -5,7 +5,7 @@ const TimeModule = require('Time');
 const Patches = require('Patches')
 
 let work = true
-let limit = false
+let limit = true
 let string1 = "|"
 const time = 150
 
@@ -38,7 +38,7 @@ function check(checkString) {
 }
 
 function touch(symbol, objectTxt, counter) {
-    if (work && !limit) {
+    if (work && limit) {
         string1 = string1.substring(0, string1.length - 1)
         objectTxt.text = string1
 
@@ -212,6 +212,10 @@ function touch(symbol, objectTxt, counter) {
             textObject.text = string1
             string1 = string1 + " "
             textObject.text = string1
+
+            countSymbolString[nowString] += 1
+            counterSymbol += 1
+
             string1 = autoReturn(string1)
             string1 = string1 + "|"
             sleep(time).then(() => {
@@ -232,6 +236,7 @@ function touch(symbol, objectTxt, counter) {
             textObject.text = string1
 
             string1 = string1 + "\n"
+            // string1 = string1 + "*"
 
             nowString += 1
 
@@ -256,16 +261,19 @@ function touch(symbol, objectTxt, counter) {
                 string1 = string1.substring(0, string1.length - 1)
                 textObject.text = string1
             }
+            // if (string1.slice(-1) === "*" && work) {
             if (string1.slice(-1) === "\n" && work) {
+                // if (string1.slice(string1.slice(-1)-1) !== "*") {
                 if (string1.slice(string1.slice(-1)-1) === "\n") {
                     Diagnostics.log(string1)
-                    Diagnostics.log("che" + (-2).toString())
+                    Diagnostics.log("deleted 1 symbol")
+                    Diagnostics.log("last symbol:" + string1[counterSymbol-1])
                     string1 = string1.substring(0, string1.length - 1)
                     Diagnostics.log(string1)
                     nowString -= 1
                 } else {
                     Diagnostics.log(string1)
-                    Diagnostics.log("che" + (-1).toString())
+                    Diagnostics.log("deleted 2 symbol")
                     string1 = string1.substring(0, string1.length - 2)
                     Diagnostics.log(string1)
 
@@ -300,7 +308,6 @@ function touch(symbol, objectTxt, counter) {
     await TouchGestures.onTap(done).subscribe(() => {
         if (work === true) {
             work = false
-            limit = true
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
             return
@@ -308,7 +315,6 @@ function touch(symbol, objectTxt, counter) {
 
         if (work === false) {
             work = true
-            limit = false
             string1 = string1 + "|"
             sleep(time).then(() => {
                 textObject.text = string1
@@ -316,4 +322,3 @@ function touch(symbol, objectTxt, counter) {
         }
     });
 })();
-
