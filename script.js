@@ -16,6 +16,19 @@ let counterSymbol = 0
 let countSymbolString = [0, 0, 0, 0, 0]
 let nowString = 0
 
+const debug = true
+
+function metric() {
+    if (debug) {
+        Diagnostics.log("-----------------------------------------------")
+        Diagnostics.log("work:             " + work)
+        Diagnostics.log("limit:            " + limit)
+        Diagnostics.log("counterSymbol:    " + counterSymbol)
+        Diagnostics.log("countSymbolString:" + countSymbolString)
+        Diagnostics.log("nowString:" + nowString)
+        Diagnostics.log("-----------------------------------------------")
+    }
+}
 
 
 function sleep(ms) {
@@ -67,15 +80,13 @@ function touch(symbol, objectTxt, counter) {
             objectTxt.text = string1
         });
         string1 = check(string1)
-
-        Diagnostics.log(countSymbolString)
-        Diagnostics.log(nowString)
-        Diagnostics.log(counterSymbol)
-        Diagnostics.log(string1)
+        metric()
     }
 }
 
+// const ALPHABET = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 (async function () {
+
     const a = await Scene.root.findFirst('letter_a')
     const b = await Scene.root.findFirst('letter_b')
     const c = await Scene.root.findFirst('letter_c')
@@ -111,6 +122,31 @@ function touch(symbol, objectTxt, counter) {
 
     const textObject = await Scene.root.findFirst('3dText0')
     const counter = await Scene.root.findFirst('3dText1')
+
+    // const symbols = await ALPHABET.map( (ch)=> {
+    //     const callback = Scene.root.findFirst(`letter_${ch.toLowerCase()}`)
+    //     return{
+    //         symUC: ch,
+    //         symLC: ch.toLowerCase(),
+    //         callback: callback
+    //
+    //     }
+    //
+    // })
+    //
+    // for (const item of symbols) {
+    //     Diagnostics.log(item.symLC)
+    //     TouchGestures.onTap(item.callback).subscribe(() => {
+    //         touch(item.symUC, textObject, counter)
+    //     });
+    // }
+
+    // for (const item of symbols) {
+    //     Diagnostics.log(item.symUC)
+    //     await TouchGestures.onTap(item.callback).subscribe(() => {
+    //         touch(item.symUC, textObject, counter)
+    //     });
+    // }
 
     await TouchGestures.onTap(a).subscribe(() => {
         touch("A", textObject, counter)
@@ -238,11 +274,8 @@ function touch(symbol, objectTxt, counter) {
             sleep(time).then(() => {
                 textObject.text = string1
             });
-
-            Diagnostics.log(countSymbolString)
-            Diagnostics.log(nowString)
-            Diagnostics.log(limitSymbol)
-            Diagnostics.log(string1)
+            string1 = check(string1)
+            metric()
         }
     });
 
@@ -252,7 +285,6 @@ function touch(symbol, objectTxt, counter) {
             textObject.text = string1
 
             string1 = string1 + "\n"
-            // string1 = string1 + "*"
 
             nowString += 1
 
@@ -262,37 +294,23 @@ function touch(symbol, objectTxt, counter) {
             sleep(time).then(() => {
                 textObject.text = string1
             });
-
-            Diagnostics.log(countSymbolString)
-            Diagnostics.log(nowString)
-            Diagnostics.log(limitSymbol)
-            Diagnostics.log(string1)
+            metric()
         }
     });
 
     await TouchGestures.onTap(delet).subscribe(() => {
-        if (string1 !== "|" && work || !limit) {
+        if (string1 !== "|" && work) {
             Diagnostics.log(string1)
             if (limit) {
                 string1 = string1.substring(0, string1.length - 1)
                 textObject.text = string1
             }
-            // if (string1.slice(-1) === "*" && work) {
             if (string1.slice(-1) === "\n" && work) {
-                // if (string1.slice(string1.slice(-1)-1) !== "*") {
                 if (string1.slice(string1.slice(-1)-1) === "\n") {
-                    Diagnostics.log(string1)
-                    Diagnostics.log("deleted 1 symbol")
-                    Diagnostics.log("last symbol:" + string1[counterSymbol-1])
                     string1 = string1.substring(0, string1.length - 1)
-                    Diagnostics.log(string1)
                     nowString -= 1
                 } else {
-                    Diagnostics.log(string1)
-                    Diagnostics.log("deleted 2 symbol")
                     string1 = string1.substring(0, string1.length - 2)
-                    Diagnostics.log(string1)
-
                     counterSymbol -= 1
                     nowString -= 1
                     countSymbolString[nowString] -=1
@@ -313,11 +331,7 @@ function touch(symbol, objectTxt, counter) {
                 textObject.text = string1
             });
             counter.text = (limitSymbol - counterSymbol).toString()
-
-            Diagnostics.log(countSymbolString)
-            Diagnostics.log(nowString)
-            Diagnostics.log(limitSymbol)
-            Diagnostics.log(string1)
+            metric()
         }
     });
 
@@ -328,6 +342,7 @@ function touch(symbol, objectTxt, counter) {
                 string1 = string1.substring(0, string1.length - 1)
                 textObject.text = string1
             }
+            metric()
             return
         }
 
@@ -339,6 +354,7 @@ function touch(symbol, objectTxt, counter) {
                     textObject.text = string1
                 });
             }
+            metric()
         }
     });
 })();
