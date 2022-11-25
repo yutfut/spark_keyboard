@@ -12,7 +12,7 @@ const time = 150
 const limitSymbol = 44
 const limitReturn = 4
 
-let counterSymbol = 0
+let counterSymbol = 0;
 let countSymbolString = [0, 0, 0, 0, 0]
 let nowString = 0
 
@@ -56,7 +56,7 @@ function check(checkString) {
 }
 
 // (async function() {
-//     await Patches.inputs.setBoolean('counterSymbol', counterSymbol)
+//     await Patches.inputs.setScalar('counterSymbol', counterSymbol)
 // })();
 
 function touch(symbol, objectTxt, counter) {
@@ -70,6 +70,7 @@ function touch(symbol, objectTxt, counter) {
 
         countSymbolString[nowString] += 1
         counterSymbol += 1
+        Patches.inputs.setScalar('counterSymbol', counterSymbol)
 
         objectTxt.text = string1
 
@@ -150,7 +151,7 @@ function touch(symbol, objectTxt, counter) {
     //         touch(item.symUC, textObject, counter)
     //     });
     // }
-    await Patches.inputs.setBoolean('counterSymbol', counterSymbol)
+    // await Patches.inputs.setScalar('counterSymbol', counterSymbol)
 
     await TouchGestures.onTap(a).subscribe(() => {
         touch("A", textObject, counter)
@@ -268,6 +269,7 @@ function touch(symbol, objectTxt, counter) {
 
             countSymbolString[nowString] += 1
             counterSymbol += 1
+            Patches.inputs.setScalar('counterSymbol', counterSymbol)
 
             counter.text = (limitSymbol - counterSymbol).toString()
 
@@ -335,6 +337,7 @@ function touch(symbol, objectTxt, counter) {
                 textObject.text = string1
             });
             counter.text = (limitSymbol - counterSymbol).toString()
+            Patches.inputs.setScalar('counterSymbol', counterSymbol)
             metric()
         }
     });
