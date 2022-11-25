@@ -2,7 +2,8 @@ const Scene = require('Scene');
 const TouchGestures = require('TouchGestures');
 const Diagnostics = require('Diagnostics');
 const TimeModule = require('Time');
-const Patches = require('Patches')
+const Reactive = require('Reactive');
+const Patches = require('Patches');
 
 let work = true
 let limit = true
@@ -301,6 +302,8 @@ function touch(symbol, objectTxt, counter) {
                 textObject.text = string1
             });
             metric()
+        } else {
+            Patches.inputs.setPulse('custPulse', Reactive.once())
         }
     });
 
