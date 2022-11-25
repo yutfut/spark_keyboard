@@ -21,11 +21,11 @@ const debug = true
 function metric() {
     if (debug) {
         Diagnostics.log("-----------------------------------------------")
-        Diagnostics.log("work:             " + work)
-        Diagnostics.log("limit:            " + limit)
-        Diagnostics.log("counterSymbol:    " + counterSymbol)
-        Diagnostics.log("countSymbolString:" + countSymbolString)
-        Diagnostics.log("nowString:" + nowString)
+        Diagnostics.log("work:              " + work)
+        Diagnostics.log("limit:             " + limit)
+        Diagnostics.log("counterSymbol:     " + counterSymbol)
+        Diagnostics.log("countSymbolString: " + countSymbolString)
+        Diagnostics.log("nowString:         " + nowString)
         Diagnostics.log("-----------------------------------------------")
     }
 }
@@ -54,6 +54,10 @@ function check(checkString) {
     }
     return checkString
 }
+
+// (async function() {
+//     await Patches.inputs.setBoolean('counterSymbol', counterSymbol)
+// })();
 
 function touch(symbol, objectTxt, counter) {
     if (work && limit) {
@@ -86,7 +90,6 @@ function touch(symbol, objectTxt, counter) {
 
 // const ALPHABET = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 (async function () {
-
     const a = await Scene.root.findFirst('letter_a')
     const b = await Scene.root.findFirst('letter_b')
     const c = await Scene.root.findFirst('letter_c')
@@ -147,6 +150,7 @@ function touch(symbol, objectTxt, counter) {
     //         touch(item.symUC, textObject, counter)
     //     });
     // }
+    await Patches.inputs.setBoolean('counterSymbol', counterSymbol)
 
     await TouchGestures.onTap(a).subscribe(() => {
         touch("A", textObject, counter)
