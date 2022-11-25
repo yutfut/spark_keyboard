@@ -10,6 +10,7 @@ let string1 = "|"
 const time = 150
 
 const limitSymbol = 44
+const limitReturn = 4
 
 let counterSymbol = 0
 let countSymbolString = [0, 0, 0, 0, 0]
@@ -22,6 +23,10 @@ function sleep(ms) {
 }
 
 function autoReturn(checkString) {
+    if (nowString === limitReturn && countSymbolString[nowString] === 13) {
+        limit = false
+        return checkString
+    }
     if (countSymbolString[nowString] === 14) {
         checkString = checkString + "\n"
         nowString += 1
@@ -30,7 +35,7 @@ function autoReturn(checkString) {
 }
 
 function check(checkString) {
-    if (counterSymbol === limitSymbol) {
+    if (counterSymbol === limitSymbol ) {
         checkString = checkString.substring(0, checkString.length - 1)
         limit = false
     }
@@ -51,13 +56,18 @@ function touch(symbol, objectTxt, counter) {
 
         objectTxt.text = string1
 
+        counter.text = (limitSymbol - counterSymbol).toString()
+
+        if (limit === false) {
+            return
+        }
+
         string1 = string1 + "|"
         sleep(time).then(() => {
             objectTxt.text = string1
         });
         string1 = check(string1)
 
-        counter.text = (limitSymbol - counterSymbol).toString()
         Diagnostics.log(countSymbolString)
         Diagnostics.log(nowString)
         Diagnostics.log(counterSymbol)
@@ -207,21 +217,27 @@ function touch(symbol, objectTxt, counter) {
     });
 
     await TouchGestures.onTap(sps).subscribe(() => {
-        if (work && string1 !== "|") {
+        if (work && string1 !== "|" && limit) {
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
+
+            string1 = autoReturn(string1)
+
             string1 = string1 + " "
             textObject.text = string1
 
             countSymbolString[nowString] += 1
             counterSymbol += 1
 
-            string1 = autoReturn(string1)
+            counter.text = (limitSymbol - counterSymbol).toString()
+
+            if (limit === false) {
+                return
+            }
             string1 = string1 + "|"
             sleep(time).then(() => {
                 textObject.text = string1
             });
-            counter.text = (limitSymbol - counterSymbol).toString()
 
             Diagnostics.log(countSymbolString)
             Diagnostics.log(nowString)
@@ -231,7 +247,7 @@ function touch(symbol, objectTxt, counter) {
     });
 
     await TouchGestures.onTap(ret).subscribe(() => {
-        if (work) {
+        if (limit && nowString < limitReturn) {
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
 
@@ -308,17 +324,21 @@ function touch(symbol, objectTxt, counter) {
     await TouchGestures.onTap(done).subscribe(() => {
         if (work === true) {
             work = false
-            string1 = string1.substring(0, string1.length - 1)
-            textObject.text = string1
+            if (limit) {
+                string1 = string1.substring(0, string1.length - 1)
+                textObject.text = string1
+            }
             return
         }
 
         if (work === false) {
             work = true
-            string1 = string1 + "|"
-            sleep(time).then(() => {
-                textObject.text = string1
-            });
+            if (limit) {
+                string1 = string1 + "|"
+                sleep(time).then(() => {
+                    textObject.text = string1
+                });
+            }
         }
     });
 })();
