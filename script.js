@@ -68,6 +68,7 @@ function touch(symbol, objectTxt, counter) {
         string1 = autoReturn(string1)
 
         string1 += symbol
+        Patches.inputs.setString('Text', string1)
 
         countSymbolString[nowString] += 1
         counterSymbol += 1
@@ -266,6 +267,7 @@ function touch(symbol, objectTxt, counter) {
             string1 = autoReturn(string1)
 
             string1 = string1 + " "
+            Patches.inputs.setString('Text', string1)
             textObject.text = string1
 
             countSymbolString[nowString] += 1
@@ -292,6 +294,7 @@ function touch(symbol, objectTxt, counter) {
             textObject.text = string1
 
             string1 = string1 + "\n"
+            Patches.inputs.setString('Text', string1)
 
             nowString += 1
 
@@ -334,6 +337,7 @@ function touch(symbol, objectTxt, counter) {
             if (limit === false) {
                 limit = true
             }
+            Patches.inputs.setString('Text', string1)
             textObject.text = string1
             string1 = string1 + "|"
             sleep(time).then(() => {
