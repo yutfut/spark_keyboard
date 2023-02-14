@@ -5,6 +5,13 @@ const TimeModule = require('Time');
 const Reactive = require('Reactive');
 const Patches = require('Patches');
 
+// когда человек больше не может печатать
+// патч для текста
+// вывод в textobject
+
+// убрать кол-во символов
+
+
 let work = true
 let limit = true
 let string1 = "|"
@@ -19,6 +26,14 @@ let nowString = 0
 
 const debug = true
 
+function printString() {
+    Diagnostics.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    for(let i = 0; i < counterSymbol; i++) {
+        Diagnostics.log("(" + string1[i] + ")")
+    }
+    Diagnostics.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+}
+
 function metric() {
     if (debug) {
         Diagnostics.log("-----------------------------------------------")
@@ -28,6 +43,7 @@ function metric() {
         Diagnostics.log("countSymbolString: " + countSymbolString)
         Diagnostics.log("nowString:         " + nowString)
         Diagnostics.log("string:            " + string1)
+        printString()
         Diagnostics.log("-----------------------------------------------")
     }
 }
@@ -48,18 +64,20 @@ function sleep(ms) {
 }
 
 function automaticLineTransfer(string2, searchWhiteSpace) {
-    let newString = ""
+    Diagnostics.log(string2.slice(0,searchWhiteSpace))
+    Diagnostics.log(string2.slice(searchWhiteSpace, counterSymbol))
 
-    for (let i = 0; i < counterSymbol + nowString; i++) {
-        automaticLineTransferDebug(i, newString, string2)
+    // for (let i = 0; i < counterSymbol; i++) {
+    //     automaticLineTransferDebug(i, newString, string2)
+    //
+    //     if (i === searchWhiteSpace) {
+    //         newString = newString + "\n"
+    //     } else {
+    //         newString = newString + string2[i]
+    //     }
+    // }
 
-        if (i === searchWhiteSpace) {
-            newString = newString + "\n"
-        } else {
-            newString = newString + string2[i]
-        }
-    }
-    return newString
+    return string2.slice(0,searchWhiteSpace) + "\n" + string2.slice(searchWhiteSpace+1)
 }
 
 function autoReturn(checkString) {
@@ -67,10 +85,11 @@ function autoReturn(checkString) {
         limit = false
         return checkString
     }
+
     if (countSymbolString[nowString] === 14) {
         Diagnostics.log("произошел перенос строки")
 
-        let searchWhiteSpace = counterSymbol + nowString
+        let searchWhiteSpace = counterSymbol
 
         Diagnostics.log(string1[searchWhiteSpace])
         if (string1[searchWhiteSpace] === undefined) {
@@ -78,32 +97,77 @@ function autoReturn(checkString) {
         }
 
         let countSymbolsOfOneString = 0
-        while (true) {
 
-            Diagnostics.log("searchWhiteSpace:" + searchWhiteSpace)
-            Diagnostics.log("symbol:" + string1[searchWhiteSpace])
+        Diagnostics.log("ещем номер пробела с конца")
+        let numberOfWhiteSpase = 0
+        for (;numberOfWhiteSpase < 14; numberOfWhiteSpase++) {
+            Diagnostics.log("-----------------------------------------------")
+            Diagnostics.log("counterSymbol:" + counterSymbol)
+            Diagnostics.log("numberOfWhiteSpase:" + numberOfWhiteSpase)
+            Diagnostics.log("symbol:(" + string1[counterSymbol - numberOfWhiteSpase] + ")")
+            Diagnostics.log("-----------------------------------------------")
+            if (string1[counterSymbol - numberOfWhiteSpase] === " ") {
+                Diagnostics.log("lol")
+                Diagnostics.log("-----------------------------------------------")
+                Diagnostics.log("numberOfWhiteSpase:    " + numberOfWhiteSpase)
+                Diagnostics.log(counterSymbol - numberOfWhiteSpase)
+                Diagnostics.log(string1[counterSymbol - numberOfWhiteSpase])
+                Diagnostics.log("-----------------------------------------------")
 
-            searchWhiteSpace = searchWhiteSpace - 1
-
-            if (string1[searchWhiteSpace] !== " ") {
-                countSymbolString[nowString] -= 1
-                countSymbolString[nowString+1] += 1
-            }
-
-            if (string1[searchWhiteSpace] === " ") {
-                countSymbolString[nowString] -= 1
-
-                checkString = automaticLineTransfer(checkString, searchWhiteSpace)
-                counterSymbol -= 1
-                break;
-            }
-
-            countSymbolsOfOneString = countSymbolsOfOneString + 1
-            if (countSymbolsOfOneString === 14) {
-                break;
+                countSymbolString[nowString] -= numberOfWhiteSpase
+                countSymbolString[nowString+1] += (numberOfWhiteSpase - 1)
+                nowString += 1
+                return automaticLineTransfer(checkString, counterSymbol - numberOfWhiteSpase)
             }
         }
+
+        checkString += "\n"
+        counterSymbol += 1
         nowString += 1
+
+        // Diagnostics.log("numberOfWhiteSpase:    " + numberOfWhiteSpase)
+        // Diagnostics.log(counterSymbol - numberOfWhiteSpase)
+        // Diagnostics.log(string1[counterSymbol - numberOfWhiteSpase])
+
+        // Diagnostics.log("произошел перенос строки")
+        //
+        // let searchWhiteSpace = counterSymbol
+        //
+        // Diagnostics.log(string1[searchWhiteSpace])
+        // if (string1[searchWhiteSpace] === undefined) {
+        //     Diagnostics.log('che')
+        // }
+        //
+        // let countSymbolsOfOneString = 0
+        // while (true) {
+        //
+        //     Diagnostics.log("searchWhiteSpace:" + searchWhiteSpace)
+        //     Diagnostics.log("symbol:" + string1[searchWhiteSpace])
+        //
+        //     searchWhiteSpace = searchWhiteSpace - 1
+        //
+        //     if (string1[searchWhiteSpace] !== " ") {
+        //         countSymbolString[nowString] -= 1
+        //         countSymbolString[nowString+1] += 1
+        //     }
+        //
+        //     if (string1[searchWhiteSpace] === " ") {
+        //         countSymbolString[nowString] -= 1
+        //
+        //         checkString = automaticLineTransfer(checkString, searchWhiteSpace)
+        //         counterSymbol -= 1
+        //         break;
+        //     }
+        //
+        //     countSymbolsOfOneString = countSymbolsOfOneString + 1
+        //     if (countSymbolsOfOneString === 14) {
+        //         checkString += "\n"
+        //         break;
+        //     }
+        // }
+        //
+        // counterSymbol += 1
+        // nowString += 1
     }
 
     return checkString
@@ -115,6 +179,12 @@ function check(checkString) {
         limit = false
     }
     return checkString
+}
+
+function checkOfLimit() {
+    if (countSymbolString[4] === 14) {
+        limit = false
+    }
 }
 
 // (async function() {
@@ -137,19 +207,23 @@ function touch(symbol, objectTxt, counter) {
 
         objectTxt.text = string1
 
-        counter.text = (limitSymbol - counterSymbol).toString()
+        counter.text = (counterSymbol).toString()
 
-        if (limit === false) {
-            return
+        // if (limit === false) {
+        //     return
+        // }
+
+        if (limit === true) {
+            string1 = string1 + "|"
         }
-
-        string1 = string1 + "|"
 
         sleep(time).then(() => {
             objectTxt.text = string1
         });
 
-        string1 = check(string1)
+        // string1 = check(string1)
+
+        checkOfLimit()
 
         metric()
     }
@@ -338,7 +412,7 @@ function touch(symbol, objectTxt, counter) {
             counterSymbol += 1
             Patches.inputs.setScalar('counterSymbol', counterSymbol)
 
-            counter.text = (limitSymbol - counterSymbol).toString()
+            counter.text = (counterSymbol).toString()
 
             if (limit === false) {
                 return
@@ -347,7 +421,9 @@ function touch(symbol, objectTxt, counter) {
             sleep(time).then(() => {
                 textObject.text = string1
             });
-            string1 = check(string1)
+            // string1 = check(string1)
+            checkOfLimit()
+
             metric()
         }
     });
@@ -361,8 +437,11 @@ function touch(symbol, objectTxt, counter) {
             Patches.inputs.setString('Text', string1)
 
             nowString += 1
+            counterSymbol += 1
 
             textObject.text = string1
+            counter.text = (counterSymbol).toString()
+
             string1 = string1 + "|"
 
             sleep(time).then(() => {
@@ -378,40 +457,69 @@ function touch(symbol, objectTxt, counter) {
         if (string1 !== "|" && work) {
 
             Diagnostics.log(string1)
+            Diagnostics.log(string1.slice(0, string1.length - 1))
 
-            if (limit) {
-                string1 = string1.substring(0, string1.length - 1)
-                textObject.text = string1
-            }
-            if (string1.slice(-1) === "\n" && work) {
-                if (string1.slice(string1.slice(-1)-1) === "\n") {
-                    string1 = string1.substring(0, string1.length - 1)
-                    nowString -= 1
-                } else {
-                    string1 = string1.substring(0, string1.length - 2)
-                    counterSymbol -= 1
-                    nowString -= 1
-                    countSymbolString[nowString] -=1
-                }
+            string1 = string1.slice(0, string1.length - 1)
 
-            } else {
-                string1 = string1.substring(0, string1.length - 1)
-                counterSymbol -= 1
-                countSymbolString[nowString] -=1
+            printString()
 
-            }
-            if (limit === false) {
-                limit = true
-            }
-            Patches.inputs.setString('Text', string1)
-            textObject.text = string1
+            string1 = string1.substring(0, string1.length - 1)
+            counterSymbol -= 1
+
+            // if (string1[counterSymbol - 1] === "\n" && countSymbolString[nowString] === 0) {
+            //     string1 = string1.substring(0, string1.length - 1)
+            //     counterSymbol -= 1
+            // } else {
+            //
+            // }
+
             string1 = string1 + "|"
-            sleep(time).then(() => {
-                textObject.text = string1
-            });
-            counter.text = (limitSymbol - counterSymbol).toString()
-            Patches.inputs.setScalar('counterSymbol', counterSymbol)
+
+            textObject.text = string1
+            counter.text = (counterSymbol).toString()
+
             metric()
+
+            // Diagnostics.log(string1)
+            //
+            // if (limit) {
+            //     string1 = string1.substring(0, string1.length - 1)
+            //     textObject.text = string1
+            // }
+            // if (string1.slice(-1) === "\n" && work) {
+            //     if (string1.slice(string1.slice(-1)-1) === "\n") {
+            //         string1 = string1.substring(0, string1.length - 1)
+            //         nowString -= 1
+            //         counterSymbol -= 1
+            //     } else {
+            //         string1 = string1.substring(0, string1.length - 2)
+            //         counterSymbol -= 1
+            //         nowString -= 1
+            //         countSymbolString[nowString] -=1
+            //     }
+            //
+            // } else {
+            //     string1 = string1.substring(0, string1.length - 1)
+            //     counterSymbol -= 1
+            //     countSymbolString[nowString] -=1
+            //
+            // }
+            // if (limit === false) {
+            //     limit = true
+            // }
+            // Patches.inputs.setString('Text', string1)
+            // textObject.text = string1
+            //
+            // string1 = string1 + "|"
+            //
+            // sleep(time).then(() => {
+            //     textObject.text = string1
+            // });
+            //
+            // counter.text = (counterSymbol).toString()
+            //
+            // Patches.inputs.setScalar('counterSymbol', counterSymbol)
+            // metric()
         }
     });
 
@@ -437,4 +545,36 @@ function touch(symbol, objectTxt, counter) {
             metric()
         }
     });
+
+    // await function findobj(){
+    //     for (let i = 1; i < 100; i++) {
+    //         Diagnostics.log("123")
+    //     }
+    //     if (string1[counterSymbol - 1] === "|") {
+    //         Diagnostics.log("che")
+    //     }
+    // }
 })();
+
+// (async function () {
+//     // for (let i = 1; i < 100; i++) {
+//     //         Diagnostics.log("123")
+//     // }
+//
+//     while (true) {
+//         sleep(time).then(() => {
+//             if (string1[counterSymbol - 1] === "|") {
+//                 Diagnostics.log("che")
+//             }
+//         });
+//     }
+// })();
+
+// async function findobj(){
+//     while(true){
+//         Diagnostics.log("123")
+//     }
+//     if (string1[counterSymbol - 1] === "|") {
+//         Diagnostics.log("che")
+//     }
+// }
