@@ -5,6 +5,13 @@ const TimeModule = require('Time');
 const Reactive = require('Reactive');
 const Patches = require('Patches');
 
+// когда человек больше не может печатать
+// патч для текста
+// вывод в textobject
+
+// убрать кол-во символов
+
+
 let work = true
 let limit = true
 let string1 = "|"
@@ -27,6 +34,7 @@ function metric() {
         Diagnostics.log("counterSymbol:     " + counterSymbol)
         Diagnostics.log("countSymbolString: " + countSymbolString)
         Diagnostics.log("nowString:         " + nowString)
+        Diagnostics.log("string:            " + string1)
         Diagnostics.log("-----------------------------------------------")
     }
 }
@@ -42,9 +50,44 @@ function autoReturn(checkString) {
         return checkString
     }
     if (countSymbolString[nowString] === 14) {
-        checkString = checkString + "\n"
+        // checkString = checkString + "\n"
+        Diagnostics.log("произошел перенос строки")
+        let searchWhiteSpace = counterSymbol
+        let countSymbolsOfOneString = 0
+        searchWhiteSpace = searchWhiteSpace - 1
+        while (true) {
+            Diagnostics.log("searchWhiteSpace:" + searchWhiteSpace)
+            Diagnostics.log("symbol:" + string1[searchWhiteSpace])
+            if (string1[searchWhiteSpace] === " ") {
+
+                let newString = ""
+                for (let i = 0; i < counterSymbol; i++) {
+                    Diagnostics.log(i)
+                    Diagnostics.log(newString)
+                    Diagnostics.log(checkString)
+                    if (i === searchWhiteSpace) {
+                        newString = newString + "\n"
+                    } else {
+                        newString = newString + checkString[i]
+                    }
+                }
+                checkString = newString
+                break;
+            }
+
+            searchWhiteSpace = searchWhiteSpace - 1
+
+            countSymbolString[nowString] -= 1
+            countSymbolString[nowString+1] += 1
+
+            countSymbolsOfOneString = countSymbolsOfOneString + 1
+            if (countSymbolsOfOneString === 14) {
+                break;
+            }
+        }
         nowString += 1
     }
+
     return checkString
 }
 
