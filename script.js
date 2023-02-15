@@ -5,112 +5,21 @@ const TimeModule = require('Time');
 const Reactive = require('Reactive');
 const Patches = require('Patches');
 
-// когда человек больше не может печатать
-// патч для текста
-// вывод в textobject
-
-// убрать кол-во символов
-
-// !@#$%&*
-
-// fuck  !@#$ f*ck f**k
-
-// fuck => f*ck
-
+import {metric, tranferMetrics, printString, whiteSpaseFoundMetrics, deletedWhiteSpaceMetrics, vocabularyCheckMetrics} from './metrics'
 
 let work = true
 let limit = true
 let string1 = "|"
 const time = 150
 
-const limitSymbol = 44
 const limitReturn = 4
 
 let counterSymbol = 0;
 let countSymbolString = [0, 0, 0, 0, 0]
 let nowString = 0
 
-const debug = true
-
-function printString() {
-    Diagnostics.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    for(let i = 0; i < counterSymbol; i++) {
-        Diagnostics.log("(" + string1[i] + ")")
-    }
-    Diagnostics.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-}
-
-function metric() {
-    if (debug) {
-        Diagnostics.log("-----------------------------------------------")
-        Diagnostics.log("work:              " + work)
-        Diagnostics.log("limit:             " + limit)
-        Diagnostics.log("counterSymbol:     " + counterSymbol)
-        Diagnostics.log("countSymbolString: " + countSymbolString)
-        Diagnostics.log("nowString:         " + nowString)
-        Diagnostics.log("string:            " + string1)
-        printString()
-        Diagnostics.log("-----------------------------------------------")
-    }
-}
-
-function automaticLineTransferDebug(i, newString, string2) {
-    if (debug) {
-        Diagnostics.log("-----------------------------------------------")
-        Diagnostics.log("i:             " + i)
-        Diagnostics.log("newString:     " + newString)
-        Diagnostics.log("string2:       " + string2)
-        Diagnostics.log("-----------------------------------------------")
-    }
-}
-
-function tranferMetrics(numberOfWhiteSpase) {
-    Diagnostics.log("-----------------------------------------------")
-    Diagnostics.log("counterSymbol:" + counterSymbol)
-    Diagnostics.log("numberOfWhiteSpase:" + numberOfWhiteSpase)
-    Diagnostics.log("symbol:(" + string1[counterSymbol - numberOfWhiteSpase] + ")")
-    Diagnostics.log("-----------------------------------------------")
-}
-
-function whiteSpaseFoundMetrics(numberOfWhiteSpase) {
-    Diagnostics.log("White Space Found")
-    Diagnostics.log("-----------------------------------------------")
-    Diagnostics.log("numberOfWhiteSpase:    " + numberOfWhiteSpase)
-    Diagnostics.log(counterSymbol - numberOfWhiteSpase)
-    Diagnostics.log(string1[counterSymbol - numberOfWhiteSpase])
-    Diagnostics.log("-----------------------------------------------")
-}
-
-function deletedWhiteSpaceMetrics(checkString) {
-    Diagnostics.log("Deleted white spase")
-    Diagnostics.log("-----------------------------------------------")
-    Diagnostics.log(checkString)
-    Diagnostics.log(counterSymbol)
-    Diagnostics.log(checkString[counterSymbol - 1])
-    printString()
-    Diagnostics.log("-----------------------------------------------")
-}
-
-
 function sleep(ms) {
     return new Promise(resolve => TimeModule.setTimeout(resolve, ms));
-}
-
-function automaticLineTransfer(string2, searchWhiteSpace) {
-    Diagnostics.log(string2.slice(0,searchWhiteSpace))
-    Diagnostics.log(string2.slice(searchWhiteSpace, counterSymbol))
-
-    // for (let i = 0; i < counterSymbol; i++) {
-    //     automaticLineTransferDebug(i, newString, string2)
-    //
-    //     if (i === searchWhiteSpace) {
-    //         newString = newString + "\n"
-    //     } else {
-    //         newString = newString + string2[i]
-    //     }
-    // }
-
-    return string2.slice(0,searchWhiteSpace) + "\n" + string2.slice(searchWhiteSpace+1)
 }
 
 function autoReturn(checkString) {
@@ -121,10 +30,11 @@ function autoReturn(checkString) {
 
     if (countSymbolString[nowString] === 14) {
         if (checkString[counterSymbol - 1] === " ") {
+
             while (true) {
                 if (checkString[counterSymbol - 1] === " ") {
 
-                    deletedWhiteSpaceMetrics(checkString)
+                    deletedWhiteSpaceMetrics(checkString, counterSymbol, checkString)
 
                     checkString = checkString.substring(0, checkString.length - 1)
                     counterSymbol -= 1
@@ -133,97 +43,40 @@ function autoReturn(checkString) {
                     checkString += "\n"
                     counterSymbol += 1
                     nowString += 1
+
+                    metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
+
                     return checkString
                 }
             }
-            metric()
         }
 
+        Diagnostics.log("Ищем номер пробела с конца")
 
-        Diagnostics.log("произошел перенос строки")
+        let numberOfWhiteSpace = 0
+        for (;numberOfWhiteSpace < 14; numberOfWhiteSpace++) {
+            tranferMetrics(counterSymbol, numberOfWhiteSpace, string1)
 
-        let searchWhiteSpace = counterSymbol
+            if (string1[counterSymbol - numberOfWhiteSpace] === " ") {
+                whiteSpaseFoundMetrics(numberOfWhiteSpace, counterSymbol, string1)
 
-        Diagnostics.log(string1[searchWhiteSpace])
-        if (string1[searchWhiteSpace] === undefined) {
-            Diagnostics.log('che')
-        }
-
-        let countSymbolsOfOneString = 0
-
-        Diagnostics.log("ещем номер пробела с конца")
-
-        let numberOfWhiteSpase = 0
-        for (;numberOfWhiteSpase < 14; numberOfWhiteSpase++) {
-            tranferMetrics(numberOfWhiteSpase)
-
-            if (string1[counterSymbol - numberOfWhiteSpase] === " ") {
-                whiteSpaseFoundMetrics(numberOfWhiteSpase)
-
-                countSymbolString[nowString] -= numberOfWhiteSpase
-                countSymbolString[nowString+1] += (numberOfWhiteSpase - 1)
+                countSymbolString[nowString] -= numberOfWhiteSpace
+                countSymbolString[nowString+1] += (numberOfWhiteSpace - 1)
                 nowString += 1
-                return automaticLineTransfer(checkString, counterSymbol - numberOfWhiteSpase)
+
+                return checkString.slice(0,counterSymbol - numberOfWhiteSpace) + "\n" + checkString.slice(counterSymbol - numberOfWhiteSpace+1)
+            }
+
+            if (countSymbolString[nowString] - numberOfWhiteSpace + 1 === 0) {
+                break
             }
         }
 
         checkString += "\n"
         counterSymbol += 1
         nowString += 1
-
-        // Diagnostics.log("numberOfWhiteSpase:    " + numberOfWhiteSpase)
-        // Diagnostics.log(counterSymbol - numberOfWhiteSpase)
-        // Diagnostics.log(string1[counterSymbol - numberOfWhiteSpase])
-        //
-        // Diagnostics.log("произошел перенос строки")
-        //
-        // let searchWhiteSpace = counterSymbol
-        //
-        // Diagnostics.log(string1[searchWhiteSpace])
-        // if (string1[searchWhiteSpace] === undefined) {
-        //     Diagnostics.log('che')
-        // }
-        //
-        // let countSymbolsOfOneString = 0
-        // while (true) {
-        //
-        //     Diagnostics.log("searchWhiteSpace:" + searchWhiteSpace)
-        //     Diagnostics.log("symbol:" + string1[searchWhiteSpace])
-        //
-        //     searchWhiteSpace = searchWhiteSpace - 1
-        //
-        //     if (string1[searchWhiteSpace] !== " ") {
-        //         countSymbolString[nowString] -= 1
-        //         countSymbolString[nowString+1] += 1
-        //     }
-        //
-        //     if (string1[searchWhiteSpace] === " ") {
-        //         countSymbolString[nowString] -= 1
-        //
-        //         checkString = automaticLineTransfer(checkString, searchWhiteSpace)
-        //         counterSymbol -= 1
-        //         break;
-        //     }
-        //
-        //     countSymbolsOfOneString = countSymbolsOfOneString + 1
-        //     if (countSymbolsOfOneString === 14) {
-        //         checkString += "\n"
-        //         break;
-        //     }
-        // }
-        //
-        // counterSymbol += 1
-        // nowString += 1
     }
 
-    return checkString
-}
-
-function check(checkString) {
-    if (counterSymbol === limitSymbol ) {
-        checkString = checkString.substring(0, checkString.length - 1)
-        limit = false
-    }
     return checkString
 }
 
@@ -233,9 +86,36 @@ function checkOfLimit() {
     }
 }
 
-// (async function() {
-//     await Patches.inputs.setScalar('counterSymbol', counterSymbol)
-// })();
+const dict = {
+    "FUCK": "F*CK",
+    "SHIT": "SH*T",
+    "FUCKED": "F*CKED",
+    "FUCKING": "F*CKING"
+}
+
+function vocabularyCheck(checkString) {
+    let lastWord = ""
+
+    Diagnostics.log("searchWhiteSpace for vocabulary")
+
+    let numberOfWhiteSpace = 0
+    for (;numberOfWhiteSpace < 14; numberOfWhiteSpace++) {
+
+        if (string1[counterSymbol - numberOfWhiteSpace] === " " || countSymbolString[nowString] - numberOfWhiteSpace + 1 === 0) {
+            vocabularyCheckMetrics(numberOfWhiteSpace, counterSymbol, checkString)
+
+            lastWord = checkString.slice(counterSymbol - numberOfWhiteSpace + 1)
+
+            if (lastWord in dict) {
+                return checkString.slice(0,counterSymbol - numberOfWhiteSpace + 1) + dict[lastWord]
+            }
+
+            printString(lastWord, lastWord.length)
+        }
+    }
+
+    return checkString
+}
 
 function touch(symbol, objectTxt, counter) {
     if (work && limit) {
@@ -245,19 +125,11 @@ function touch(symbol, objectTxt, counter) {
         string1 = autoReturn(string1)
 
         string1 += symbol
-        Patches.inputs.setString('Text', string1)
-
         countSymbolString[nowString] += 1
         counterSymbol += 1
+
+        Patches.inputs.setString('Text', string1)
         Patches.inputs.setScalar('counterSymbol', counterSymbol)
-
-        objectTxt.text = string1
-
-        counter.text = (counterSymbol).toString()
-
-        // if (limit === false) {
-        //     return
-        // }
 
         if (limit === true) {
             string1 = string1 + "|"
@@ -265,17 +137,15 @@ function touch(symbol, objectTxt, counter) {
 
         sleep(time).then(() => {
             objectTxt.text = string1
+            counter.text = (counterSymbol).toString()
         });
-
-        // string1 = check(string1)
 
         checkOfLimit()
 
-        metric()
+        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
     }
 }
 
-// const ALPHABET = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 (async function () {
     const a = await Scene.root.findFirst('letter_a')
     const b = await Scene.root.findFirst('letter_b')
@@ -311,176 +181,151 @@ function touch(symbol, objectTxt, counter) {
     const done = await Scene.root.findFirst('done')
 
     const textObject = await Scene.root.findFirst('3dText0')
-    const counter = await Scene.root.findFirst('3dText1')
-
-    // const symbols = await ALPHABET.map( (ch)=> {
-    //     const callback = Scene.root.findFirst(`letter_${ch.toLowerCase()}`)
-    //     return{
-    //         symUC: ch,
-    //         symLC: ch.toLowerCase(),
-    //         callback: callback
-    //
-    //     }
-    //
-    // })
-    //
-    // for (const item of symbols) {
-    //     Diagnostics.log(item.symLC)
-    //     TouchGestures.onTap(item.callback).subscribe(() => {
-    //         touch(item.symUC, textObject, counter)
-    //     });
-    // }
-
-    // for (const item of symbols) {
-    //     Diagnostics.log(item.symUC)
-    //     await TouchGestures.onTap(item.callback).subscribe(() => {
-    //         touch(item.symUC, textObject, counter)
-    //     });
-    // }
-    // await Patches.inputs.setScalar('counterSymbol', counterSymbol)
+    const counterObject = await Scene.root.findFirst('3dText1')
 
     await TouchGestures.onTap(a).subscribe(() => {
-        touch("A", textObject, counter)
+        touch("A", textObject, counterObject)
     });
 
     await TouchGestures.onTap(b).subscribe(() => {
-        touch("B", textObject, counter)
+        touch("B", textObject, counterObject)
     });
 
     await TouchGestures.onTap(c).subscribe(() => {
-        touch("С", textObject, counter)
+        touch("C", textObject, counterObject)
     });
 
     await TouchGestures.onTap(d).subscribe(() => {
-        touch("D", textObject, counter)
+        touch("D", textObject, counterObject)
     });
 
     await TouchGestures.onTap(e).subscribe(() => {
-        touch("E", textObject, counter)
+        touch("E", textObject, counterObject)
     });
 
     await TouchGestures.onTap(f).subscribe(() => {
-        touch("F", textObject, counter)
+        touch("F", textObject, counterObject)
     });
 
     await TouchGestures.onTap(g).subscribe(() => {
-        touch("G", textObject, counter)
+        touch("G", textObject, counterObject)
     });
 
     await TouchGestures.onTap(h).subscribe(() => {
-        touch("H", textObject, counter)
+        touch("H", textObject, counterObject)
     });
 
     await TouchGestures.onTap(i).subscribe(() => {
-        touch("I", textObject, counter)
+        touch("I", textObject, counterObject)
     });
 
     await TouchGestures.onTap(j).subscribe(() => {
-        touch("J", textObject, counter)
+        touch("J", textObject, counterObject)
     });
 
     await TouchGestures.onTap(k).subscribe(() => {
-        touch("K", textObject, counter)
+        touch("K", textObject, counterObject)
     });
 
     await TouchGestures.onTap(l).subscribe(() => {
-        touch("L", textObject, counter)
+        touch("L", textObject, counterObject)
     });
 
     await TouchGestures.onTap(m).subscribe(() => {
-        touch("M", textObject, counter)
+        touch("M", textObject, counterObject)
     });
 
     await TouchGestures.onTap(n).subscribe(() => {
-        touch("N", textObject, counter)
+        touch("N", textObject, counterObject)
     });
 
     await TouchGestures.onTap(o).subscribe(() => {
-        touch("O", textObject, counter)
+        touch("O", textObject, counterObject)
     });
 
     await TouchGestures.onTap(p).subscribe(() => {
-        touch("P", textObject, counter)
+        touch("P", textObject, counterObject)
     });
 
     await TouchGestures.onTap(q).subscribe(() => {
-        touch("Q", textObject, counter)
+        touch("Q", textObject, counterObject)
     });
 
     await TouchGestures.onTap(r).subscribe(() => {
-        touch("R", textObject, counter)
+        touch("R", textObject, counterObject)
     });
 
     await TouchGestures.onTap(s).subscribe(() => {
-        touch("S", textObject, counter)
+        touch("S", textObject, counterObject)
     });
 
     await TouchGestures.onTap(t).subscribe(() => {
-        touch("T", textObject, counter)
+        touch("T", textObject, counterObject)
     });
 
     await TouchGestures.onTap(u).subscribe(() => {
-        touch("U", textObject, counter)
+        touch("U", textObject, counterObject)
     });
 
     await TouchGestures.onTap(v).subscribe(() => {
-        touch("V", textObject, counter)
+        touch("V", textObject, counterObject)
     });
 
     await TouchGestures.onTap(w).subscribe(() => {
-        touch("W", textObject, counter)
+        touch("W", textObject, counterObject)
     });
 
     await TouchGestures.onTap(x).subscribe(() => {
-        touch("X", textObject, counter)
+        touch("X", textObject, counterObject)
     });
 
     await TouchGestures.onTap(y).subscribe(() => {
-        touch("Y", textObject, counter)
+        touch("Y", textObject, counterObject)
     });
 
     await TouchGestures.onTap(z).subscribe(() => {
-        touch("Z", textObject, counter)
+        touch("Z", textObject, counterObject)
     });
 
     await TouchGestures.onTap(sps).subscribe(() => {
         if (work && string1 !== "|" && limit) {
+
+            string1 = string1.substring(0, string1.length - 1)
+            textObject.text = string1
+
+            string1 = vocabularyCheck(string1)
 
             if (countSymbolString[nowString] === 0) {
                 Diagnostics.log("white space can't be first symbol in the line")
                 return
             }
 
-            string1 = string1.substring(0, string1.length - 1)
-            textObject.text = string1
+            if (countSymbolString[nowString] === 14) {
+                string1 += "\n"
+                counterSymbol += 1
+                nowString += 1
+            } else {
+                string1 = string1 + " "
+                countSymbolString[nowString] += 1
+                counterSymbol += 1
+            }
 
-            string1 = autoReturn(string1)
-
-            string1 = string1 + " "
-            Patches.inputs.setString('Text', string1)
-            textObject.text = string1
-
-            countSymbolString[nowString] += 1
-            counterSymbol += 1
-            Patches.inputs.setScalar('counterSymbol', counterSymbol)
-
-            counter.text = (counterSymbol).toString()
-
-            // if (limit === false) {
-            //     return
-            // }
+            // string1 = autoReturn(string1)
 
             if (limit === true) {
                 string1 = string1 + "|"
             }
 
+            Patches.inputs.setString('Text', string1)
+            Patches.inputs.setScalar('counterSymbol', counterSymbol)
+
             sleep(time).then(() => {
                 textObject.text = string1
+                counterObject.text = (counterSymbol).toString()
             });
-            // string1 = check(string1)
             checkOfLimit()
 
-            metric()
+            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
         }
     });
 
@@ -488,6 +333,8 @@ function touch(symbol, objectTxt, counter) {
         if (limit && nowString < limitReturn) {
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
+
+            string1 = vocabularyCheck(string1)
 
             while (true) {
                 if (string1[counterSymbol - 1] === " ") {
@@ -499,21 +346,19 @@ function touch(symbol, objectTxt, counter) {
                 }
             }
 
-            string1 = string1 + "\n"
-            Patches.inputs.setString('Text', string1)
+            string1 += "\n|"
 
             nowString += 1
             counterSymbol += 1
 
-            textObject.text = string1
-            counter.text = (counterSymbol).toString()
-
-            string1 = string1 + "|"
+            Patches.inputs.setString('Text', string1)
 
             sleep(time).then(() => {
                 textObject.text = string1
+                counterObject.text = (counterSymbol).toString()
             });
-            metric()
+
+            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
         } else {
             Patches.inputs.setPulse('custPulse', Reactive.once())
         }
@@ -522,14 +367,9 @@ function touch(symbol, objectTxt, counter) {
     await TouchGestures.onTap(delet).subscribe(() => {
         if (string1 !== "|" && work) {
 
-            Diagnostics.log(string1)
-            Diagnostics.log(string1.slice(0, string1.length - 1))
-
             if (string1[counterSymbol] === "|") {
                 string1 = string1.slice(0, string1.length - 1)
             }
-
-            printString()
 
             if (string1[counterSymbol - 1] === "\n" && countSymbolString[nowString] === 0) {
                 nowString -= 1
@@ -539,65 +379,17 @@ function touch(symbol, objectTxt, counter) {
 
             string1 = string1.substring(0, string1.length - 1)
             counterSymbol -= 1
-            // if (string1[counterSymbol - 1] === "\n" && countSymbolString[nowString] === 0) {
-            // string1 = string1.substring(0, string1.length - 1)
-            // counterSymbol -= 1
-            // } else {
-            //
-            // }
-
 
             string1 = string1 + "|"
 
             textObject.text = string1
-            counter.text = (counterSymbol).toString()
+            counterObject.text = (counterSymbol).toString()
 
             if (!limit) {
                 limit = true
             }
 
-            metric()
-
-            // Diagnostics.log(string1)
-            //
-            // if (limit) {
-            //     string1 = string1.substring(0, string1.length - 1)
-            //     textObject.text = string1
-            // }
-            // if (string1.slice(-1) === "\n" && work) {
-            //     if (string1.slice(string1.slice(-1)-1) === "\n") {
-            //         string1 = string1.substring(0, string1.length - 1)
-            //         nowString -= 1
-            //         counterSymbol -= 1
-            //     } else {
-            //         string1 = string1.substring(0, string1.length - 2)
-            //         counterSymbol -= 1
-            //         nowString -= 1
-            //         countSymbolString[nowString] -=1
-            //     }
-            //
-            // } else {
-            //     string1 = string1.substring(0, string1.length - 1)
-            //     counterSymbol -= 1
-            //     countSymbolString[nowString] -=1
-            //
-            // }
-            // if (limit === false) {
-            //     limit = true
-            // }
-            // Patches.inputs.setString('Text', string1)
-            // textObject.text = string1
-            //
-            // string1 = string1 + "|"
-            //
-            // sleep(time).then(() => {
-            //     textObject.text = string1
-            // });
-            //
-            // counter.text = (counterSymbol).toString()
-            //
-            // Patches.inputs.setScalar('counterSymbol', counterSymbol)
-            // metric()
+            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
         }
     });
 
@@ -606,11 +398,12 @@ function touch(symbol, objectTxt, counter) {
             work = false
             if (limit) {
                 string1 = string1.substring(0, string1.length - 1)
+                string1 = vocabularyCheck(string1)
                 sleep(time).then(() => {
                     textObject.text = string1
                 });
             }
-            metric()
+            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
             return
         }
 
@@ -622,39 +415,7 @@ function touch(symbol, objectTxt, counter) {
                     textObject.text = string1
                 });
             }
-            metric()
+            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
         }
     });
-
-    // await function findobj(){
-    //     for (let i = 1; i < 100; i++) {
-    //         Diagnostics.log("123")
-    //     }
-    //     if (string1[counterSymbol - 1] === "|") {
-    //         Diagnostics.log("che")
-    //     }
-    // }
 })();
-
-// (async function () {
-//     // for (let i = 1; i < 100; i++) {
-//     //         Diagnostics.log("123")
-//     // }
-//
-//     while (true) {
-//         sleep(time).then(() => {
-//             if (string1[counterSymbol - 1] === "|") {
-//                 Diagnostics.log("che")
-//             }
-//         });
-//     }
-// })();
-
-// async function findobj(){
-//     while(true){
-//         Diagnostics.log("123")
-//     }
-//     if (string1[counterSymbol - 1] === "|") {
-//         Diagnostics.log("che")
-//     }
-// }
