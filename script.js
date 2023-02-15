@@ -11,6 +11,12 @@ const Patches = require('Patches');
 
 // убрать кол-во символов
 
+// !@#$%&*
+
+// fuck  !@#$ f*ck f**k
+
+// fuck => f*ck
+
 
 let work = true
 let limit = true
@@ -58,6 +64,33 @@ function automaticLineTransferDebug(i, newString, string2) {
     }
 }
 
+function tranferMetrics(numberOfWhiteSpase) {
+    Diagnostics.log("-----------------------------------------------")
+    Diagnostics.log("counterSymbol:" + counterSymbol)
+    Diagnostics.log("numberOfWhiteSpase:" + numberOfWhiteSpase)
+    Diagnostics.log("symbol:(" + string1[counterSymbol - numberOfWhiteSpase] + ")")
+    Diagnostics.log("-----------------------------------------------")
+}
+
+function whiteSpaseFoundMetrics(numberOfWhiteSpase) {
+    Diagnostics.log("White Space Found")
+    Diagnostics.log("-----------------------------------------------")
+    Diagnostics.log("numberOfWhiteSpase:    " + numberOfWhiteSpase)
+    Diagnostics.log(counterSymbol - numberOfWhiteSpase)
+    Diagnostics.log(string1[counterSymbol - numberOfWhiteSpase])
+    Diagnostics.log("-----------------------------------------------")
+}
+
+function deletedWhiteSpaceMetrics(checkString) {
+    Diagnostics.log("Deleted white spase")
+    Diagnostics.log("-----------------------------------------------")
+    Diagnostics.log(checkString)
+    Diagnostics.log(counterSymbol)
+    Diagnostics.log(checkString[counterSymbol - 1])
+    printString()
+    Diagnostics.log("-----------------------------------------------")
+}
+
 
 function sleep(ms) {
     return new Promise(resolve => TimeModule.setTimeout(resolve, ms));
@@ -87,6 +120,26 @@ function autoReturn(checkString) {
     }
 
     if (countSymbolString[nowString] === 14) {
+        if (checkString[counterSymbol - 1] === " ") {
+            while (true) {
+                if (checkString[counterSymbol - 1] === " ") {
+
+                    deletedWhiteSpaceMetrics(checkString)
+
+                    checkString = checkString.substring(0, checkString.length - 1)
+                    counterSymbol -= 1
+                    countSymbolString[nowString] -= 1
+                } else {
+                    checkString += "\n"
+                    counterSymbol += 1
+                    nowString += 1
+                    return checkString
+                }
+            }
+            metric()
+        }
+
+
         Diagnostics.log("произошел перенос строки")
 
         let searchWhiteSpace = counterSymbol
@@ -99,20 +152,13 @@ function autoReturn(checkString) {
         let countSymbolsOfOneString = 0
 
         Diagnostics.log("ещем номер пробела с конца")
+
         let numberOfWhiteSpase = 0
         for (;numberOfWhiteSpase < 14; numberOfWhiteSpase++) {
-            Diagnostics.log("-----------------------------------------------")
-            Diagnostics.log("counterSymbol:" + counterSymbol)
-            Diagnostics.log("numberOfWhiteSpase:" + numberOfWhiteSpase)
-            Diagnostics.log("symbol:(" + string1[counterSymbol - numberOfWhiteSpase] + ")")
-            Diagnostics.log("-----------------------------------------------")
+            tranferMetrics(numberOfWhiteSpase)
+
             if (string1[counterSymbol - numberOfWhiteSpase] === " ") {
-                Diagnostics.log("lol")
-                Diagnostics.log("-----------------------------------------------")
-                Diagnostics.log("numberOfWhiteSpase:    " + numberOfWhiteSpase)
-                Diagnostics.log(counterSymbol - numberOfWhiteSpase)
-                Diagnostics.log(string1[counterSymbol - numberOfWhiteSpase])
-                Diagnostics.log("-----------------------------------------------")
+                whiteSpaseFoundMetrics(numberOfWhiteSpase)
 
                 countSymbolString[nowString] -= numberOfWhiteSpase
                 countSymbolString[nowString+1] += (numberOfWhiteSpase - 1)
@@ -128,7 +174,7 @@ function autoReturn(checkString) {
         // Diagnostics.log("numberOfWhiteSpase:    " + numberOfWhiteSpase)
         // Diagnostics.log(counterSymbol - numberOfWhiteSpase)
         // Diagnostics.log(string1[counterSymbol - numberOfWhiteSpase])
-
+        //
         // Diagnostics.log("произошел перенос строки")
         //
         // let searchWhiteSpace = counterSymbol
@@ -399,6 +445,12 @@ function touch(symbol, objectTxt, counter) {
 
     await TouchGestures.onTap(sps).subscribe(() => {
         if (work && string1 !== "|" && limit) {
+
+            if (countSymbolString[nowString] === 0) {
+                Diagnostics.log("white space can't be first symbol in the line")
+                return
+            }
+
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
 
@@ -414,10 +466,14 @@ function touch(symbol, objectTxt, counter) {
 
             counter.text = (counterSymbol).toString()
 
-            if (limit === false) {
-                return
+            // if (limit === false) {
+            //     return
+            // }
+
+            if (limit === true) {
+                string1 = string1 + "|"
             }
-            string1 = string1 + "|"
+
             sleep(time).then(() => {
                 textObject.text = string1
             });
@@ -432,6 +488,16 @@ function touch(symbol, objectTxt, counter) {
         if (limit && nowString < limitReturn) {
             string1 = string1.substring(0, string1.length - 1)
             textObject.text = string1
+
+            while (true) {
+                if (string1[counterSymbol - 1] === " ") {
+                    string1 = string1.substring(0, string1.length - 1)
+                    counterSymbol -= 1
+                    countSymbolString[nowString] -= 1
+                } else {
+                    break
+                }
+            }
 
             string1 = string1 + "\n"
             Patches.inputs.setString('Text', string1)
@@ -459,24 +525,36 @@ function touch(symbol, objectTxt, counter) {
             Diagnostics.log(string1)
             Diagnostics.log(string1.slice(0, string1.length - 1))
 
-            string1 = string1.slice(0, string1.length - 1)
+            if (string1[counterSymbol] === "|") {
+                string1 = string1.slice(0, string1.length - 1)
+            }
 
             printString()
 
+            if (string1[counterSymbol - 1] === "\n" && countSymbolString[nowString] === 0) {
+                nowString -= 1
+            } else {
+                countSymbolString[nowString] -= 1
+            }
+
             string1 = string1.substring(0, string1.length - 1)
             counterSymbol -= 1
-
             // if (string1[counterSymbol - 1] === "\n" && countSymbolString[nowString] === 0) {
-            //     string1 = string1.substring(0, string1.length - 1)
-            //     counterSymbol -= 1
+            // string1 = string1.substring(0, string1.length - 1)
+            // counterSymbol -= 1
             // } else {
             //
             // }
+
 
             string1 = string1 + "|"
 
             textObject.text = string1
             counter.text = (counterSymbol).toString()
+
+            if (!limit) {
+                limit = true
+            }
 
             metric()
 
@@ -528,7 +606,9 @@ function touch(symbol, objectTxt, counter) {
             work = false
             if (limit) {
                 string1 = string1.substring(0, string1.length - 1)
-                textObject.text = string1
+                sleep(time).then(() => {
+                    textObject.text = string1
+                });
             }
             metric()
             return
