@@ -146,6 +146,138 @@ function touch(symbol, objectTxt, counter) {
     }
 }
 
+function whiteSpace(objectTxt, counter) {
+    if (work && string1 !== "|" && limit) {
+
+        string1 = string1.substring(0, string1.length - 1)
+        objectTxt.text = string1
+
+        string1 = vocabularyCheck(string1)
+
+        if (countSymbolString[nowString] === 0) {
+            Diagnostics.log("white space can't be first symbol in the line")
+            return
+        }
+
+        if (countSymbolString[nowString] === 14) {
+            string1 += "\n"
+            counterSymbol += 1
+            nowString += 1
+        } else {
+            string1 = string1 + " "
+            countSymbolString[nowString] += 1
+            counterSymbol += 1
+        }
+
+        // string1 = autoReturn(string1)
+
+        if (limit === true) {
+            string1 = string1 + "|"
+        }
+
+        Patches.inputs.setString('Text', string1)
+        Patches.inputs.setScalar('counterSymbol', counterSymbol)
+
+        sleep(time).then(() => {
+            objectTxt.text = string1
+            counter.text = (counterSymbol).toString()
+        });
+        checkOfLimit()
+
+        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
+    }
+}
+
+function lineBreak(textObject, counterObject) {
+    if (limit && nowString < limitReturn) {
+        string1 = string1.substring(0, string1.length - 1)
+        textObject.text = string1
+
+        string1 = vocabularyCheck(string1)
+
+        while (true) {
+            if (string1[counterSymbol - 1] === " ") {
+                string1 = string1.substring(0, string1.length - 1)
+                counterSymbol -= 1
+                countSymbolString[nowString] -= 1
+            } else {
+                break
+            }
+        }
+
+        string1 += "\n|"
+
+        nowString += 1
+        counterSymbol += 1
+
+        Patches.inputs.setString('Text', string1)
+
+        sleep(time).then(() => {
+            textObject.text = string1
+            counterObject.text = (counterSymbol).toString()
+        });
+
+        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
+    } else {
+        Patches.inputs.setPulse('custPulse', Reactive.once())
+    }
+}
+
+function deleteSymbol(textObject, counterObject) {
+    if (string1 !== "|" && work) {
+
+        if (string1[counterSymbol] === "|") {
+            string1 = string1.slice(0, string1.length - 1)
+        }
+
+        if (string1[counterSymbol - 1] === "\n" && countSymbolString[nowString] === 0) {
+            nowString -= 1
+        } else {
+            countSymbolString[nowString] -= 1
+        }
+
+        string1 = string1.substring(0, string1.length - 1)
+        counterSymbol -= 1
+
+        string1 = string1 + "|"
+
+        textObject.text = string1
+        counterObject.text = (counterSymbol).toString()
+
+        if (!limit) {
+            limit = true
+        }
+
+        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
+    }
+}
+
+function doneButton(textObject) {
+    if (work === true) {
+        work = false
+        if (limit) {
+            string1 = string1.substring(0, string1.length - 1)
+            string1 = vocabularyCheck(string1)
+            sleep(time).then(() => {
+                textObject.text = string1
+            });
+        }
+        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
+        return
+    }
+
+    if (work === false) {
+        work = true
+        if (limit) {
+            string1 = string1 + "|"
+            sleep(time).then(() => {
+                textObject.text = string1
+            });
+        }
+        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
+    }
+}
+
 (async function () {
     const a = await Scene.root.findFirst('letter_a')
     const b = await Scene.root.findFirst('letter_b')
@@ -288,134 +420,18 @@ function touch(symbol, objectTxt, counter) {
     });
 
     await TouchGestures.onTap(sps).subscribe(() => {
-        if (work && string1 !== "|" && limit) {
-
-            string1 = string1.substring(0, string1.length - 1)
-            textObject.text = string1
-
-            string1 = vocabularyCheck(string1)
-
-            if (countSymbolString[nowString] === 0) {
-                Diagnostics.log("white space can't be first symbol in the line")
-                return
-            }
-
-            if (countSymbolString[nowString] === 14) {
-                string1 += "\n"
-                counterSymbol += 1
-                nowString += 1
-            } else {
-                string1 = string1 + " "
-                countSymbolString[nowString] += 1
-                counterSymbol += 1
-            }
-
-            // string1 = autoReturn(string1)
-
-            if (limit === true) {
-                string1 = string1 + "|"
-            }
-
-            Patches.inputs.setString('Text', string1)
-            Patches.inputs.setScalar('counterSymbol', counterSymbol)
-
-            sleep(time).then(() => {
-                textObject.text = string1
-                counterObject.text = (counterSymbol).toString()
-            });
-            checkOfLimit()
-
-            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-        }
+        whiteSpace(textObject, counterObject)
     });
 
     await TouchGestures.onTap(ret).subscribe(() => {
-        if (limit && nowString < limitReturn) {
-            string1 = string1.substring(0, string1.length - 1)
-            textObject.text = string1
-
-            string1 = vocabularyCheck(string1)
-
-            while (true) {
-                if (string1[counterSymbol - 1] === " ") {
-                    string1 = string1.substring(0, string1.length - 1)
-                    counterSymbol -= 1
-                    countSymbolString[nowString] -= 1
-                } else {
-                    break
-                }
-            }
-
-            string1 += "\n|"
-
-            nowString += 1
-            counterSymbol += 1
-
-            Patches.inputs.setString('Text', string1)
-
-            sleep(time).then(() => {
-                textObject.text = string1
-                counterObject.text = (counterSymbol).toString()
-            });
-
-            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-        } else {
-            Patches.inputs.setPulse('custPulse', Reactive.once())
-        }
+        lineBreak(textObject, counterObject)
     });
 
     await TouchGestures.onTap(delet).subscribe(() => {
-        if (string1 !== "|" && work) {
-
-            if (string1[counterSymbol] === "|") {
-                string1 = string1.slice(0, string1.length - 1)
-            }
-
-            if (string1[counterSymbol - 1] === "\n" && countSymbolString[nowString] === 0) {
-                nowString -= 1
-            } else {
-                countSymbolString[nowString] -= 1
-            }
-
-            string1 = string1.substring(0, string1.length - 1)
-            counterSymbol -= 1
-
-            string1 = string1 + "|"
-
-            textObject.text = string1
-            counterObject.text = (counterSymbol).toString()
-
-            if (!limit) {
-                limit = true
-            }
-
-            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-        }
+        deleteSymbol(textObject, counterObject)
     });
 
     await TouchGestures.onTap(done).subscribe(() => {
-        if (work === true) {
-            work = false
-            if (limit) {
-                string1 = string1.substring(0, string1.length - 1)
-                string1 = vocabularyCheck(string1)
-                sleep(time).then(() => {
-                    textObject.text = string1
-                });
-            }
-            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-            return
-        }
-
-        if (work === false) {
-            work = true
-            if (limit) {
-                string1 = string1 + "|"
-                sleep(time).then(() => {
-                    textObject.text = string1
-                });
-            }
-            metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-        }
+        doneButton(textObject)
     });
 })();
