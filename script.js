@@ -7,83 +7,8 @@ const Patches = require('Patches');
 
 import {metric, tranferMetrics, printString, whiteSpaseFoundMetrics, deletedWhiteSpaceMetrics, vocabularyCheckMetrics} from './metrics'
 
-let work = true
-let limit = true
-let string1 = "|"
-const time = 150
-
-const limitReturn = 4
-
-let counterSymbol = 0;
-let countSymbolString = [0, 0, 0, 0, 0]
-let nowString = 0
-
 function sleep(ms) {
     return new Promise(resolve => TimeModule.setTimeout(resolve, ms));
-}
-
-function autoReturn(checkString) {
-    if (nowString === limitReturn && countSymbolString[nowString] === 13) {
-        limit = false
-        return checkString
-    }
-
-    if (countSymbolString[nowString] === 14) {
-        if (checkString[counterSymbol - 1] === " ") {
-
-            while (true) {
-                if (checkString[counterSymbol - 1] === " ") {
-
-                    deletedWhiteSpaceMetrics(checkString, counterSymbol, checkString)
-
-                    checkString = checkString.substring(0, checkString.length - 1)
-                    counterSymbol -= 1
-                    countSymbolString[nowString] -= 1
-                } else {
-                    checkString += "\n"
-                    counterSymbol += 1
-                    nowString += 1
-
-                    metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-
-                    return checkString
-                }
-            }
-        }
-
-        Diagnostics.log("Ищем номер пробела с конца")
-
-        let numberOfWhiteSpace = 0
-        for (;numberOfWhiteSpace < 14; numberOfWhiteSpace++) {
-            tranferMetrics(counterSymbol, numberOfWhiteSpace, string1)
-
-            if (string1[counterSymbol - numberOfWhiteSpace] === " ") {
-                whiteSpaseFoundMetrics(numberOfWhiteSpace, counterSymbol, string1)
-
-                countSymbolString[nowString] -= numberOfWhiteSpace
-                countSymbolString[nowString+1] += (numberOfWhiteSpace - 1)
-                nowString += 1
-
-                return checkString.slice(0,counterSymbol - numberOfWhiteSpace) + "\n" + checkString.slice(counterSymbol - numberOfWhiteSpace+1)
-            }
-
-            if (countSymbolString[nowString] - numberOfWhiteSpace + 1 === 0) {
-                break
-            }
-        }
-
-        checkString += "\n"
-        counterSymbol += 1
-        nowString += 1
-    }
-
-    return checkString
-}
-
-function checkOfLimit() {
-    if (countSymbolString[4] === 14) {
-        limit = false
-    }
 }
 
 const dict = {
@@ -93,188 +18,323 @@ const dict = {
     "FUCKING": "F*CKING"
 }
 
-function vocabularyCheck(checkString) {
-    let lastWord = ""
+const time = 150
 
-    Diagnostics.log("searchWhiteSpace for vocabulary")
-
-    let numberOfWhiteSpace = 0
-    for (;numberOfWhiteSpace < 14; numberOfWhiteSpace++) {
-
-        if (string1[counterSymbol - numberOfWhiteSpace] === " " || countSymbolString[nowString] - numberOfWhiteSpace + 1 === 0) {
-            vocabularyCheckMetrics(numberOfWhiteSpace, counterSymbol, checkString)
-
-            lastWord = checkString.slice(counterSymbol - numberOfWhiteSpace + 1)
-
-            if (lastWord in dict) {
-                return checkString.slice(0,counterSymbol - numberOfWhiteSpace + 1) + dict[lastWord]
-            }
-
-            printString(lastWord, lastWord.length)
-        }
+class S {
+    constructor(
+        constructorWork = true,
+        constructorLimit = true,
+        constructorText = "|",
+        constructorLimitReturn = 4,
+        constructorCounterSymbol = 0,
+        constructorCountSymbolString = [0, 0, 0, 0, 0],
+        constructorNowString = 0
+    ) {
+        this.work = constructorWork;
+        this.limit = constructorLimit;
+        this.text = constructorText;
+        this.limitReturn = constructorLimitReturn;
+        this.counterSymbol = constructorCounterSymbol;
+        this.countSymbolString = constructorCountSymbolString;
+        this.nowString = constructorNowString
     }
 
-    return checkString
-}
-
-function touch(symbol, objectTxt, counter) {
-    if (work && limit) {
-        string1 = string1.substring(0, string1.length - 1)
-        objectTxt.text = string1
-
-        string1 = autoReturn(string1)
-
-        string1 += symbol
-        countSymbolString[nowString] += 1
-        counterSymbol += 1
-
-        Patches.inputs.setString('Text', string1)
-        Patches.inputs.setScalar('counterSymbol', counterSymbol)
-
-        if (limit === true) {
-            string1 = string1 + "|"
-        }
-
+    outputPatches(objectTxt, objectCounter) {
         sleep(time).then(() => {
-            objectTxt.text = string1
-            counter.text = (counterSymbol).toString()
+            Patches.inputs.setString('Text', this.text)
+            Patches.inputs.setScalar('counterSymbol', this.counterSymbol)
+            objectTxt.text = this.text
+            objectCounter.text = (this.counterSymbol).toString()
         });
-
-        checkOfLimit()
-
-        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
     }
-}
 
-function whiteSpace(objectTxt, counter) {
-    if (work && string1 !== "|" && limit) {
+    checkOfLimit() {
+        if (this.countSymbolString[4] === 14) {
+            this.limit = false
+        }
+    }
 
-        string1 = string1.substring(0, string1.length - 1)
-        objectTxt.text = string1
-
-        string1 = vocabularyCheck(string1)
-
-        if (countSymbolString[nowString] === 0) {
-            Diagnostics.log("white space can't be first symbol in the line")
+    autoReturn() {
+        let checkString = this.text
+        if (this.nowString === this.limitReturn &&
+            this.countSymbolString[this.nowString] === 13) {
+            this.limit = false
+            this.text = checkString
             return
         }
 
-        if (countSymbolString[nowString] === 14) {
-            string1 += "\n"
-            counterSymbol += 1
-            nowString += 1
-        } else {
-            string1 = string1 + " "
-            countSymbolString[nowString] += 1
-            counterSymbol += 1
+        if (this.countSymbolString[this.nowString] === 14) {
+            if (checkString[this.counterSymbol - 1] === " ") {
+
+                while (true) {
+                    if (checkString[this.counterSymbol - 1] === " ") {
+
+                        deletedWhiteSpaceMetrics(checkString, this.counterSymbol, this.checkString)
+
+                        checkString = checkString.substring(0, checkString.length - 1)
+                        this.counterSymbol -= 1
+                        this.countSymbolString[this.nowString] -= 1
+                    } else {
+                        checkString += "\n"
+                        this.counterSymbol += 1
+                        this.nowString += 1
+
+                        metric(
+                            this.work,
+                            this.limit,
+                            this.counterSymbol,
+                            this.countSymbolString,
+                            this.nowString,
+                            this.text
+                        )
+
+                        this.text = checkString
+
+                        return
+                    }
+                }
+            }
+
+            Diagnostics.log("Ищем номер пробела с конца")
+
+            let numberOfWhiteSpace = 0
+            for (;numberOfWhiteSpace < 14; numberOfWhiteSpace++) {
+                tranferMetrics(this.counterSymbol, numberOfWhiteSpace, this.text)
+
+                if (this.text[this.counterSymbol - numberOfWhiteSpace] === " ") {
+                    whiteSpaseFoundMetrics(numberOfWhiteSpace, this.counterSymbol, this.text)
+
+                    this.countSymbolString[this.nowString] -= numberOfWhiteSpace
+                    this.countSymbolString[this.nowString+1] += (numberOfWhiteSpace - 1)
+                    this.nowString += 1
+
+                    this.text = checkString.slice(0, this.counterSymbol - numberOfWhiteSpace) + "\n" + checkString.slice(this.counterSymbol - numberOfWhiteSpace + 1)
+
+                    return
+                }
+
+                if (this.countSymbolString[this.nowString] - numberOfWhiteSpace + 1 === 0) {
+                    break
+                }
+            }
+
+            this.checkString += "\n"
+            this.counterSymbol += 1
+            this.nowString += 1
         }
 
-        // string1 = autoReturn(string1)
-
-        if (limit === true) {
-            string1 = string1 + "|"
-        }
-
-        Patches.inputs.setString('Text', string1)
-        Patches.inputs.setScalar('counterSymbol', counterSymbol)
-
-        sleep(time).then(() => {
-            objectTxt.text = string1
-            counter.text = (counterSymbol).toString()
-        });
-        checkOfLimit()
-
-        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
+        this.text = checkString
     }
-}
 
-function lineBreak(textObject, counterObject) {
-    if (limit && nowString < limitReturn) {
-        string1 = string1.substring(0, string1.length - 1)
-        textObject.text = string1
+    vocabularyCheck() {
+        let checkString = this.text
+        let lastWord = ""
 
-        string1 = vocabularyCheck(string1)
+        Diagnostics.log("searchWhiteSpace for vocabulary")
 
-        while (true) {
-            if (string1[counterSymbol - 1] === " ") {
-                string1 = string1.substring(0, string1.length - 1)
-                counterSymbol -= 1
-                countSymbolString[nowString] -= 1
-            } else {
-                break
+        let numberOfWhiteSpace = 0
+        for (;numberOfWhiteSpace < 14; numberOfWhiteSpace++) {
+
+            if (this.text[this.counterSymbol - numberOfWhiteSpace] === " " ||
+                this.countSymbolString[this.nowString] - numberOfWhiteSpace + 1 === 0) {
+                vocabularyCheckMetrics(numberOfWhiteSpace, this.counterSymbol, checkString)
+
+                lastWord = checkString.slice(this.counterSymbol - numberOfWhiteSpace + 1)
+
+                if (lastWord in dict) {
+                    this.text = checkString.slice(0, this.counterSymbol - numberOfWhiteSpace + 1) + dict[lastWord]
+                }
+
+                printString(lastWord, lastWord.length)
             }
         }
-
-        string1 += "\n|"
-
-        nowString += 1
-        counterSymbol += 1
-
-        Patches.inputs.setString('Text', string1)
-
-        sleep(time).then(() => {
-            textObject.text = string1
-            counterObject.text = (counterSymbol).toString()
-        });
-
-        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-    } else {
-        Patches.inputs.setPulse('custPulse', Reactive.once())
     }
-}
 
-function deleteSymbol(textObject, counterObject) {
-    if (string1 !== "|" && work) {
+    touch(symbol, objectTxt, objectCounter) {
+        if (this.work && this.limit) {
+            this.text = this.text.substring(0, this.text.length - 1)
+            objectTxt.text = this.text
 
-        if (string1[counterSymbol] === "|") {
-            string1 = string1.slice(0, string1.length - 1)
+            this.autoReturn()
+
+            this.text += symbol
+            this.countSymbolString[this.nowString] += 1
+            this.counterSymbol += 1
+
+            if (this.limit === true) {
+                this.text = this.text + "|"
+            }
+
+            this.outputPatches(objectTxt, objectCounter)
+
+            this.checkOfLimit()
+
+            metric(
+                this.work,
+                this.limit,
+                this.counterSymbol,
+                this.countSymbolString,
+                this.nowString,
+                this.text
+            )
         }
+    }
 
-        if (string1[counterSymbol - 1] === "\n" && countSymbolString[nowString] === 0) {
-            nowString -= 1
+    whiteSpace(objectTxt, objectCounter) {
+        if (this.work && this.text !== "|" && this.limit) {
+
+            this.text = this.text.substring(0, this.text.length - 1)
+            objectTxt.text = this.text
+
+            this.vocabularyCheck()
+
+            if (this.countSymbolString[this.nowString] === 0) {
+                Diagnostics.log("white space can't be first symbol in the line")
+                return
+            }
+
+            if (this.countSymbolString[this.nowString] === 14) {
+                this.text += "\n"
+                this.counterSymbol += 1
+                this.nowString += 1
+            } else {
+                this.text = this.text + " "
+                this.countSymbolString[this.nowString] += 1
+                this.counterSymbol += 1
+            }
+
+            // string1 = autoReturn(string1)
+
+            if (this.limit === true) {
+                this.text = this.text + "|"
+            }
+
+            this.outputPatches(objectTxt, objectCounter)
+
+            this.checkOfLimit()
+
+            metric(
+                this.work,
+                this.limit,
+                this.counterSymbol,
+                this.countSymbolString,
+                this.nowString,
+                this.text
+            )
+        }
+    }
+
+    deleteSymbol(objectTxt, objectCounter) {
+        if (this.text !== "|" && this.work) {
+            if (this.text[this.counterSymbol] === "|") {
+                this.text = this.text.slice(0, this.text.length - 1)
+            }
+
+            if (this.text[this.counterSymbol - 1] === "\n" &&
+                this.countSymbolString[this.nowString] === 0) {
+                this.nowString -= 1
+            } else {
+                this.countSymbolString[this.nowString] -= 1
+            }
+
+            this.text = this.text.substring(0, this.text.length - 1)
+            this.counterSymbol -= 1
+
+            this.text = this.text + "|"
+
+            if (!this.limit) {
+                this.limit = true
+            }
+
+            this.outputPatches(objectTxt, objectCounter)
+
+            metric(
+                this.work,
+                this.limit,
+                this.counterSymbol,
+                this.countSymbolString,
+                this.nowString,
+                this.text
+            )
+        }
+    }
+
+    lineBreak(objectTxt, objectCounter) {
+        if (this.limit && this.nowString < this.limitReturn) {
+            this.text = this.text.substring(0, this.text.length - 1)
+            objectTxt.text = this.text
+
+            this.vocabularyCheck()
+
+            while (true) {
+                if (this.text[this.counterSymbol - 1] === " ") {
+                    this.text = this.text.substring(0, this.text.length - 1)
+                    this.counterSymbol -= 1
+                    this.countSymbolString[this.nowString] -= 1
+                } else {
+                    break
+                }
+            }
+
+            this.text += "\n|"
+
+            this.nowString += 1
+            this.counterSymbol += 1
+
+            this.outputPatches(objectTxt, objectCounter)
+
+            metric(
+                this.work,
+                this.limit,
+                this.counterSymbol,
+                this.countSymbolString,
+                this.nowString,
+                this.text
+            )
         } else {
-            countSymbolString[nowString] -= 1
+            Patches.inputs.setPulse('custPulse', Reactive.once())
         }
-
-        string1 = string1.substring(0, string1.length - 1)
-        counterSymbol -= 1
-
-        string1 = string1 + "|"
-
-        textObject.text = string1
-        counterObject.text = (counterSymbol).toString()
-
-        if (!limit) {
-            limit = true
-        }
-
-        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-    }
-}
-
-function doneButton(textObject) {
-    if (work === true) {
-        work = false
-        if (limit) {
-            string1 = string1.substring(0, string1.length - 1)
-            string1 = vocabularyCheck(string1)
-            sleep(time).then(() => {
-                textObject.text = string1
-            });
-        }
-        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
-        return
     }
 
-    if (work === false) {
-        work = true
-        if (limit) {
-            string1 = string1 + "|"
-            sleep(time).then(() => {
-                textObject.text = string1
-            });
+    doneButton(objectTxt, objectCounter) {
+        if (this.work === true) {
+            this.work = false
+            if (this.limit) {
+                this.text = this.text.substring(0, this.text.length - 1)
+                this.vocabularyCheck()
+
+                this.outputPatches(objectTxt, objectCounter)
+            }
+
+            metric(
+                this.work,
+                this.limit,
+                this.counterSymbol,
+                this.countSymbolString,
+                this.nowString,
+                this.text
+            )
+
+            return
         }
-        metric(work, limit, counterSymbol, countSymbolString, nowString, string1)
+
+        if (this.work === false) {
+            this.work = true
+            if (this.limit) {
+                this.text += "|"
+
+                this.outputPatches(objectTxt, objectCounter)
+            }
+
+            metric(
+                this.work,
+                this.limit,
+                this.counterSymbol,
+                this.countSymbolString,
+                this.nowString,
+                this.text
+            )
+        }
     }
 }
 
@@ -315,123 +375,125 @@ function doneButton(textObject) {
     const textObject = await Scene.root.findFirst('3dText0')
     const counterObject = await Scene.root.findFirst('3dText1')
 
+    let text = new S();
+
     await TouchGestures.onTap(a).subscribe(() => {
-        touch("A", textObject, counterObject)
+        text.touch("A", textObject, counterObject)
     });
 
     await TouchGestures.onTap(b).subscribe(() => {
-        touch("B", textObject, counterObject)
+        text.touch("B", textObject, counterObject)
     });
 
     await TouchGestures.onTap(c).subscribe(() => {
-        touch("C", textObject, counterObject)
+        text.touch("C", textObject, counterObject)
     });
 
     await TouchGestures.onTap(d).subscribe(() => {
-        touch("D", textObject, counterObject)
+        text.touch("D", textObject, counterObject)
     });
 
     await TouchGestures.onTap(e).subscribe(() => {
-        touch("E", textObject, counterObject)
+        text.touch("E", textObject, counterObject)
     });
 
     await TouchGestures.onTap(f).subscribe(() => {
-        touch("F", textObject, counterObject)
+        text.touch("F", textObject, counterObject)
     });
 
     await TouchGestures.onTap(g).subscribe(() => {
-        touch("G", textObject, counterObject)
+        text.touch("G", textObject, counterObject)
     });
 
     await TouchGestures.onTap(h).subscribe(() => {
-        touch("H", textObject, counterObject)
+        text.touch("H", textObject, counterObject)
     });
 
     await TouchGestures.onTap(i).subscribe(() => {
-        touch("I", textObject, counterObject)
+        text.touch("I", textObject, counterObject)
     });
 
     await TouchGestures.onTap(j).subscribe(() => {
-        touch("J", textObject, counterObject)
+        text.touch("J", textObject, counterObject)
     });
 
     await TouchGestures.onTap(k).subscribe(() => {
-        touch("K", textObject, counterObject)
+        text.touch("K", textObject, counterObject)
     });
 
     await TouchGestures.onTap(l).subscribe(() => {
-        touch("L", textObject, counterObject)
+        text.touch("L", textObject, counterObject)
     });
 
     await TouchGestures.onTap(m).subscribe(() => {
-        touch("M", textObject, counterObject)
+        text.touch("M", textObject, counterObject)
     });
 
     await TouchGestures.onTap(n).subscribe(() => {
-        touch("N", textObject, counterObject)
+        text.touch("N", textObject, counterObject)
     });
 
     await TouchGestures.onTap(o).subscribe(() => {
-        touch("O", textObject, counterObject)
+        text.touch("O", textObject, counterObject)
     });
 
     await TouchGestures.onTap(p).subscribe(() => {
-        touch("P", textObject, counterObject)
+        text.touch("P", textObject, counterObject)
     });
 
     await TouchGestures.onTap(q).subscribe(() => {
-        touch("Q", textObject, counterObject)
+        text.touch("Q", textObject, counterObject)
     });
 
     await TouchGestures.onTap(r).subscribe(() => {
-        touch("R", textObject, counterObject)
+        text.touch("R", textObject, counterObject)
     });
 
     await TouchGestures.onTap(s).subscribe(() => {
-        touch("S", textObject, counterObject)
+        text.touch("S", textObject, counterObject)
     });
 
     await TouchGestures.onTap(t).subscribe(() => {
-        touch("T", textObject, counterObject)
+        text.touch("T", textObject, counterObject)
     });
 
     await TouchGestures.onTap(u).subscribe(() => {
-        touch("U", textObject, counterObject)
+        text.touch("U", textObject, counterObject)
     });
 
     await TouchGestures.onTap(v).subscribe(() => {
-        touch("V", textObject, counterObject)
+        text.touch("V", textObject, counterObject)
     });
 
     await TouchGestures.onTap(w).subscribe(() => {
-        touch("W", textObject, counterObject)
+        text.touch("W", textObject, counterObject)
     });
 
     await TouchGestures.onTap(x).subscribe(() => {
-        touch("X", textObject, counterObject)
+        text.touch("X", textObject, counterObject)
     });
 
     await TouchGestures.onTap(y).subscribe(() => {
-        touch("Y", textObject, counterObject)
+        text.touch("Y", textObject, counterObject)
     });
 
     await TouchGestures.onTap(z).subscribe(() => {
-        touch("Z", textObject, counterObject)
+        text.touch("Z", textObject, counterObject)
     });
 
     await TouchGestures.onTap(sps).subscribe(() => {
-        whiteSpace(textObject, counterObject)
+        text.whiteSpace(textObject, counterObject)
     });
 
     await TouchGestures.onTap(ret).subscribe(() => {
-        lineBreak(textObject, counterObject)
+        text.lineBreak(textObject, counterObject)
     });
 
     await TouchGestures.onTap(delet).subscribe(() => {
-        deleteSymbol(textObject, counterObject)
+        text.deleteSymbol(textObject, counterObject)
     });
 
     await TouchGestures.onTap(done).subscribe(() => {
-        doneButton(textObject)
+        text.doneButton(textObject, counterObject)
     });
 })();
