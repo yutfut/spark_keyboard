@@ -22,9 +22,9 @@ const time = 150
 
 class S {
     constructor(
-        constructorWork = true,
+        constructorWork = false,
         constructorLimit = true,
-        constructorText = "|",
+        constructorText = "",
         constructorLimitReturn = 4,
         constructorCounterSymbol = 0,
         constructorCountSymbolString = [0, 0, 0, 0, 0],
@@ -56,6 +56,7 @@ class S {
 
     autoReturn() {
         let checkString = this.text
+
         if (this.nowString === this.limitReturn &&
             this.countSymbolString[this.nowString] === 13) {
             this.limit = false
@@ -108,7 +109,8 @@ class S {
                     this.countSymbolString[this.nowString+1] += (numberOfWhiteSpace - 1)
                     this.nowString += 1
 
-                    this.text = checkString.slice(0, this.counterSymbol - numberOfWhiteSpace) + "\n" + checkString.slice(this.counterSymbol - numberOfWhiteSpace + 1)
+                    this.text = checkString.slice(0, this.counterSymbol - numberOfWhiteSpace) + "\n" +
+                        checkString.slice(this.counterSymbol - numberOfWhiteSpace + 1)
 
                     return
                 }
@@ -118,7 +120,7 @@ class S {
                 }
             }
 
-            this.checkString += "\n"
+            checkString += "\n"
             this.counterSymbol += 1
             this.nowString += 1
         }
@@ -154,6 +156,10 @@ class S {
         if (this.work && this.limit) {
             this.text = this.text.substring(0, this.text.length - 1)
             objectTxt.text = this.text
+
+            if (symbol === ",") {
+                this.vocabularyCheck()
+            }
 
             this.autoReturn()
 
@@ -302,9 +308,9 @@ class S {
             if (this.limit) {
                 this.text = this.text.substring(0, this.text.length - 1)
                 this.vocabularyCheck()
-
-                this.outputPatches(objectTxt, objectCounter)
             }
+
+            this.outputPatches(objectTxt, objectCounter)
 
             metric(
                 this.work,
@@ -322,9 +328,9 @@ class S {
             this.work = true
             if (this.limit) {
                 this.text += "|"
-
-                this.outputPatches(objectTxt, objectCounter)
             }
+
+            this.outputPatches(objectTxt, objectCounter)
 
             metric(
                 this.work,
@@ -335,6 +341,22 @@ class S {
                 this.text
             )
         }
+    }
+}
+
+class blockOfStrings {
+    constructor(
+        constructorBlocks = [
+            new S(),
+            new S(),
+            new S(),
+            new S(),
+            new S()
+        ],
+        constructorBlockNumber = 0
+    ) {
+        this.block = constructorBlocks
+        this.blockNumber = constructorBlockNumber
     }
 }
 
@@ -365,135 +387,223 @@ class S {
     const x = await Scene.root.findFirst('letter_x')
     const y = await Scene.root.findFirst('letter_y')
     const z = await Scene.root.findFirst('letter_z')
+    const dot = await Scene.root.findFirst('letter_dot')
 
-    const sps = await Scene.root.findFirst('sps')
-    const ret = await Scene.root.findFirst('return')
-    const delet = await Scene.root.findFirst('delete')
+    const returnButton = await Scene.root.findFirst('return')
+    const whiteSpaceButton = await Scene.root.findFirst('sps')
+    const deleteButton = await Scene.root.findFirst('delete')
 
-    const done = await Scene.root.findFirst('done')
+    let textObject;
+    let counterObject;
 
-    const textObject = await Scene.root.findFirst('3dText0')
-    const counterObject = await Scene.root.findFirst('3dText1')
+    const textObject0 = await Scene.root.findFirst('text_block1')
+    const counterObject0 = await Scene.root.findFirst('counter_block1')
 
-    let text = new S();
+    const textObject1 = await Scene.root.findFirst('text_block2')
+    const counterObject1 = await Scene.root.findFirst('counter_block2')
+
+    const done_block1 = await Scene.root.findFirst('done_block1')
+    const edit_block1 = await Scene.root.findFirst('edit_block1')
+
+    const done_block2 = await Scene.root.findFirst('done_block2')
+    const edit_block2 = await Scene.root.findFirst('edit_block2')
+
+    let B = new blockOfStrings()
 
     await TouchGestures.onTap(a).subscribe(() => {
-        text.touch("A", textObject, counterObject)
+        B.block[B.blockNumber].touch("A", textObject, counterObject)
     });
 
     await TouchGestures.onTap(b).subscribe(() => {
-        text.touch("B", textObject, counterObject)
+        B.block[B.blockNumber].touch("B", textObject, counterObject)
     });
 
     await TouchGestures.onTap(c).subscribe(() => {
-        text.touch("C", textObject, counterObject)
+        B.block[B.blockNumber].touch("C", textObject, counterObject)
     });
 
     await TouchGestures.onTap(d).subscribe(() => {
-        text.touch("D", textObject, counterObject)
+        B.block[B.blockNumber].touch("D", textObject, counterObject)
     });
 
     await TouchGestures.onTap(e).subscribe(() => {
-        text.touch("E", textObject, counterObject)
+        B.block[B.blockNumber].touch("E", textObject, counterObject)
     });
 
     await TouchGestures.onTap(f).subscribe(() => {
-        text.touch("F", textObject, counterObject)
+        B.block[B.blockNumber].touch("F", textObject, counterObject)
     });
 
     await TouchGestures.onTap(g).subscribe(() => {
-        text.touch("G", textObject, counterObject)
+        B.block[B.blockNumber].touch("G", textObject, counterObject)
     });
 
     await TouchGestures.onTap(h).subscribe(() => {
-        text.touch("H", textObject, counterObject)
+        B.block[B.blockNumber].touch("H", textObject, counterObject)
     });
 
     await TouchGestures.onTap(i).subscribe(() => {
-        text.touch("I", textObject, counterObject)
+        B.block[B.blockNumber].touch("I", textObject, counterObject)
     });
 
     await TouchGestures.onTap(j).subscribe(() => {
-        text.touch("J", textObject, counterObject)
+        B.block[B.blockNumber].touch("J", textObject, counterObject)
     });
 
     await TouchGestures.onTap(k).subscribe(() => {
-        text.touch("K", textObject, counterObject)
+        B.block[B.blockNumber].touch("K", textObject, counterObject)
     });
 
     await TouchGestures.onTap(l).subscribe(() => {
-        text.touch("L", textObject, counterObject)
+        B.block[B.blockNumber].touch("L", textObject, counterObject)
     });
 
     await TouchGestures.onTap(m).subscribe(() => {
-        text.touch("M", textObject, counterObject)
+        B.block[B.blockNumber].touch("M", textObject, counterObject)
     });
 
     await TouchGestures.onTap(n).subscribe(() => {
-        text.touch("N", textObject, counterObject)
+        B.block[B.blockNumber].touch("N", textObject, counterObject)
     });
 
     await TouchGestures.onTap(o).subscribe(() => {
-        text.touch("O", textObject, counterObject)
+        B.block[B.blockNumber].touch("O", textObject, counterObject)
     });
 
     await TouchGestures.onTap(p).subscribe(() => {
-        text.touch("P", textObject, counterObject)
+        B.block[B.blockNumber].touch("P", textObject, counterObject)
     });
 
     await TouchGestures.onTap(q).subscribe(() => {
-        text.touch("Q", textObject, counterObject)
+        B.block[B.blockNumber].touch("Q", textObject, counterObject)
     });
 
     await TouchGestures.onTap(r).subscribe(() => {
-        text.touch("R", textObject, counterObject)
+        B.block[B.blockNumber].touch("R", textObject, counterObject)
     });
 
     await TouchGestures.onTap(s).subscribe(() => {
-        text.touch("S", textObject, counterObject)
+        B.block[B.blockNumber].touch("S", textObject, counterObject)
     });
 
     await TouchGestures.onTap(t).subscribe(() => {
-        text.touch("T", textObject, counterObject)
+        B.block[B.blockNumber].touch("T", textObject, counterObject)
     });
 
     await TouchGestures.onTap(u).subscribe(() => {
-        text.touch("U", textObject, counterObject)
+        B.block[B.blockNumber].touch("U", textObject, counterObject)
     });
 
     await TouchGestures.onTap(v).subscribe(() => {
-        text.touch("V", textObject, counterObject)
+        B.block[B.blockNumber].touch("V", textObject, counterObject)
     });
 
     await TouchGestures.onTap(w).subscribe(() => {
-        text.touch("W", textObject, counterObject)
+        B.block[B.blockNumber].touch("W", textObject, counterObject)
     });
 
     await TouchGestures.onTap(x).subscribe(() => {
-        text.touch("X", textObject, counterObject)
+        B.block[B.blockNumber].touch("X", textObject, counterObject)
     });
 
     await TouchGestures.onTap(y).subscribe(() => {
-        text.touch("Y", textObject, counterObject)
+        B.block[B.blockNumber].touch("Y", textObject, counterObject)
     });
 
     await TouchGestures.onTap(z).subscribe(() => {
-        text.touch("Z", textObject, counterObject)
+        B.block[B.blockNumber].touch("Z", textObject, counterObject)
     });
 
-    await TouchGestures.onTap(sps).subscribe(() => {
-        text.whiteSpace(textObject, counterObject)
+    await TouchGestures.onTap(whiteSpaceButton).subscribe(() => {
+        B.block[B.blockNumber].whiteSpace(textObject, counterObject)
     });
 
-    await TouchGestures.onTap(ret).subscribe(() => {
-        text.lineBreak(textObject, counterObject)
+    await TouchGestures.onTap(returnButton).subscribe(() => {
+        B.block[B.blockNumber].lineBreak(textObject, counterObject)
     });
 
-    await TouchGestures.onTap(delet).subscribe(() => {
-        text.deleteSymbol(textObject, counterObject)
+    await TouchGestures.onTap(deleteButton).subscribe(() => {
+        B.block[B.blockNumber].deleteSymbol(textObject, counterObject)
     });
 
-    await TouchGestures.onTap(done).subscribe(() => {
-        text.doneButton(textObject, counterObject)
+    await TouchGestures.onTap(dot).subscribe(() => {
+        B.block[B.blockNumber].touch(",", textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(done_block1).subscribe(() => {
+        B.block[B.blockNumber].doneButton(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(edit_block1).subscribe(() => {
+        const nowNumberBlock = 0
+
+        Diagnostics.log("@@@@@@@@@@@@@@@")
+        Diagnostics.log(B.blockNumber)
+        Diagnostics.log(B.block[B.blockNumber].work)
+        Diagnostics.log("@@@@@@@@@@@@@@@")
+
+        if (B.blockNumber === nowNumberBlock) {
+            // if (B.block[nowNumberBlock].work === false) {
+            //
+            // }
+            textObject = textObject0
+            counterObject = counterObject0
+            B.block[nowNumberBlock].doneButton(textObject, counterObject)
+        }
+
+        if (
+            B.block[B.blockNumber].work === true &&
+            B.block[nowNumberBlock].work === false
+        ) {
+            B.block[B.blockNumber].doneButton(textObject, counterObject)
+            B.blockNumber = nowNumberBlock
+            B.block[B.blockNumber].doneButton(textObject, counterObject)
+            textObject = textObject0
+            counterObject = counterObject0
+        }
+
+        Diagnostics.log("@@@@@@@@@@@@@@@")
+        Diagnostics.log(B.blockNumber)
+        Diagnostics.log(B.block[B.blockNumber].work)
+        Diagnostics.log("@@@@@@@@@@@@@@@")
+
+    });
+
+    await TouchGestures.onTap(done_block2).subscribe(() => {
+        B.block[B.blockNumber].doneButton(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(edit_block2).subscribe(() => {
+        const nowNumberBlock = 1
+
+        Diagnostics.log("@@@@@@@@@@@@@@@")
+        Diagnostics.log(B.blockNumber)
+        Diagnostics.log(B.block[B.blockNumber].work)
+        Diagnostics.log("@@@@@@@@@@@@@@@")
+
+        if (B.blockNumber === nowNumberBlock) {
+            if (B.block[nowNumberBlock].work === false) {
+                B.block[nowNumberBlock].work = true
+                textObject = textObject1
+                counterObject = counterObject1
+            }
+        }
+
+        if (
+            B.block[B.blockNumber].work === true &&
+            B.block[nowNumberBlock].work === false
+        ) {
+            B.block[B.blockNumber].doneButton(textObject, counterObject)
+            B.blockNumber = nowNumberBlock
+            B.block[B.blockNumber].doneButton(textObject, counterObject)
+            textObject = textObject1
+            counterObject = counterObject1
+        }
+
+        Diagnostics.log("@@@@@@@@@@@@@@@")
+        Diagnostics.log(B.blockNumber)
+        Diagnostics.log(B.block[B.blockNumber].work)
+        Diagnostics.log("@@@@@@@@@@@@@@@")
+
     });
 })();

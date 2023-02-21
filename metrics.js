@@ -1,18 +1,18 @@
 const Diagnostics = require('Diagnostics');
 
-const debug = true
+const debug = false
 
-export function printString(string1, counterSymbol) {
+export function printString(text, counterSymbol) {
     if (debug) {
         Diagnostics.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         for (let i = 0; i < counterSymbol; i++) {
-            Diagnostics.log("(" + string1[i] + ")")
+            Diagnostics.log("(" + text[i] + ")")
         }
         Diagnostics.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     }
 }
 
-export function metric(work, limit, counterSymbol, countSymbolString, nowString, string1) {
+export function metric(work, limit, counterSymbol, countSymbolString, nowString, text) {
     if (debug) {
         Diagnostics.log("-----------------------------------------------")
         Diagnostics.log("work:              " + work)
@@ -20,8 +20,8 @@ export function metric(work, limit, counterSymbol, countSymbolString, nowString,
         Diagnostics.log("counterSymbol:     " + counterSymbol)
         Diagnostics.log("countSymbolString: " + countSymbolString)
         Diagnostics.log("nowString:         " + nowString)
-        Diagnostics.log("string:            " + string1)
-        printString(string1, counterSymbol)
+        Diagnostics.log("string:            " + text)
+        printString(text, counterSymbol)
         Diagnostics.log("-----------------------------------------------")
     }
 }
@@ -50,7 +50,7 @@ export function whiteSpaseFoundMetrics(numberOfWhiteSpase, counterSymbol, string
     if (debug) {
         Diagnostics.log("White Space Found")
         Diagnostics.log("-----------------------------------------------")
-        Diagnostics.log("numberOfWhiteSpase:    " + numberOfWhiteSpase)
+        Diagnostics.log("numberOfWhiteSpace:    " + numberOfWhiteSpase)
         Diagnostics.log(counterSymbol - numberOfWhiteSpase)
         Diagnostics.log(string1[counterSymbol - numberOfWhiteSpase])
         Diagnostics.log("-----------------------------------------------")
@@ -59,7 +59,7 @@ export function whiteSpaseFoundMetrics(numberOfWhiteSpase, counterSymbol, string
 
 export function deletedWhiteSpaceMetrics(checkString, counterSymbol) {
     if (debug) {
-        Diagnostics.log("Deleted white spase")
+        Diagnostics.log("Deleted white space")
         Diagnostics.log("-----------------------------------------------")
         Diagnostics.log(checkString)
         Diagnostics.log(counterSymbol)
@@ -72,9 +72,9 @@ export function deletedWhiteSpaceMetrics(checkString, counterSymbol) {
 export function vocabularyCheckMetrics(numberOfWhiteSpase, counterSymbol, checkString) {
     if (debug) {
         Diagnostics.log("-----------------------------------------------")
-        Diagnostics.log("numberOfWhiteSpase:" + numberOfWhiteSpase)
+        Diagnostics.log("numberOfWhiteSpace:" + numberOfWhiteSpase)
         Diagnostics.log("counterSymbol:" + counterSymbol)
-        Diagnostics.log("counterSymbol - numberOfWhiteSpase:" + (counterSymbol - numberOfWhiteSpase))
+        Diagnostics.log("counterSymbol - numberOfWhiteSpace:" + (counterSymbol - numberOfWhiteSpase))
         Diagnostics.log("symbol:" + checkString[counterSymbol - numberOfWhiteSpase])
         Diagnostics.log("-----------------------------------------------")
     }
