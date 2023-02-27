@@ -224,32 +224,48 @@ import {blockOfStrings} from './block'
     // 0
     await TouchGestures.onTap(done_block1).subscribe(() => {
         B.block[0].doneButton()
+        B.outputPatches(textObject, counterObject)
     });
 
     await TouchGestures.onTap(edit_block1).subscribe(() => {
         const nowNumberBlock = 0
+
+        // B.swipeBlock(nowNumberBlock)
+        // для того чтобы строка нормально отрабатывала последнее слово при переходе между блоками через edit
+
+        B.swipeBlock(nowNumberBlock, textObject, counterObject)
+
         textObject = textObject1
         counterObject = counterObject1
-        B.swipeBlock(nowNumberBlock)
 
+        B.outputPatches(textObject, counterObject)
     });
 
     // 1
     await TouchGestures.onTap(done_block2).subscribe(() => {
         B.block[1].doneButton(textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
     });
 
     await TouchGestures.onTap(edit_block2).subscribe(() => {
         const nowNumberBlock = 1
+
+        // B.swipeBlock(nowNumberBlock)
+        // для того чтобы строка нормально отрабатывала последнее слово при переходе между блоками через edit
+
+        B.swipeBlock(nowNumberBlock, textObject, counterObject)
+
         textObject = textObject2
         counterObject = counterObject2
-        B.swipeBlock(nowNumberBlock)
+
+        B.outputPatches(textObject, counterObject)
     });
 
     // 2
     await TouchGestures.onTap(done_block3).subscribe(() => {
         // B.block[B.blockNumber].doneButton(textObject, counterObject)
         B.block[2].doneButton(textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
     });
 
     await TouchGestures.onTap(edit_block3).subscribe(() => {
@@ -257,12 +273,14 @@ import {blockOfStrings} from './block'
         textObject = textObject3
         counterObject = counterObject3
         B.swipeBlock(nowNumberBlock)
+        B.outputPatches(textObject, counterObject)
     });
 
     // 3
     await TouchGestures.onTap(done_block4).subscribe(() => {
         // B.block[B.blockNumber].doneButton(textObject, counterObject)
         B.block[3].doneButton(textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
     });
 
     await TouchGestures.onTap(edit_block4).subscribe(() => {
@@ -270,12 +288,14 @@ import {blockOfStrings} from './block'
         textObject = textObject4
         counterObject = counterObject4
         B.swipeBlock(nowNumberBlock)
+        B.outputPatches(textObject, counterObject)
     });
 
     // 4
     await TouchGestures.onTap(done_block5).subscribe(() => {
         // B.block[B.blockNumber].doneButton(textObject, counterObject)
-        B.block[B.blockNumber].doneButton(textObject, counterObject)
+        B.block[4].doneButton(textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
     });
 
     await TouchGestures.onTap(edit_block5).subscribe(() => {
@@ -283,5 +303,6 @@ import {blockOfStrings} from './block'
         textObject = textObject5
         counterObject = counterObject5
         B.swipeBlock(nowNumberBlock)
+        B.outputPatches(textObject, counterObject)
     });
 })();
