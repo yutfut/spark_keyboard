@@ -37,7 +37,7 @@ export class S {
     }
 
     checkOfLimit() {
-        if (this.countSymbolString[4] === 14) {
+        if (this.countSymbolString[4] === 20) {
             this.limit = false
         }
     }
@@ -46,13 +46,13 @@ export class S {
         let checkString = this.text
 
         if (this.nowString === this.limitReturn &&
-            this.countSymbolString[this.nowString] === 13) {
+            this.countSymbolString[this.nowString] === 19) {
             this.limit = false
             this.text = checkString
             return
         }
 
-        if (this.countSymbolString[this.nowString] === 14) {
+        if (this.countSymbolString[this.nowString] === 20) {
             if (checkString[this.counterSymbol - 1] === " ") {
 
                 while (true) {

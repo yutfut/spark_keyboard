@@ -32,6 +32,36 @@ import {blockOfStrings} from './block'
     const z = await Scene.root.findFirst('letter_z')
     const dot = await Scene.root.findFirst('letter_dot')
 
+    // Доп символы
+
+    const tire = await Scene.root.findFirst('tire')
+    const apostrof = await Scene.root.findFirst('apostrof')
+    const vopros = await Scene.root.findFirst('vopros')
+    const dvoetochie = await Scene.root.findFirst('dvoetochie')
+    const tri = await Scene.root.findFirst('tri')
+    const tochkazapataya = await Scene.root.findFirst('tochkazapataya')
+    const ckobka1 = await Scene.root.findFirst('ckobka1')
+    const ckobka2 = await Scene.root.findFirst('ckobka2')
+    const vosem = await Scene.root.findFirst('vosem')
+    const dollar = await Scene.root.findFirst('dollar')
+    const and = await Scene.root.findFirst('and')
+    const ad = await Scene.root.findFirst('ad')
+    const ravno = await Scene.root.findFirst('ravno')
+    const devyat = await Scene.root.findFirst('devyat')
+    const nol = await Scene.root.findFirst('nol')
+    const odin = await Scene.root.findFirst('odin')
+    const chetyre = await Scene.root.findFirst('chetyre')
+    const slash = await Scene.root.findFirst('slash')
+    const pyat = await Scene.root.findFirst('pyat')
+    const sem = await Scene.root.findFirst('sem')
+    const vosklitsatelnyi = await Scene.root.findFirst('vosklitsatelnyi')
+    const dva = await Scene.root.findFirst('dva')
+    const shest = await Scene.root.findFirst('shest')
+    const zapataya = await Scene.root.findFirst('zapataya')
+    const plys = await Scene.root.findFirst('plys')
+
+    // конец
+
     const returnButton = await Scene.root.findFirst('return')
     const whiteSpaceButton = await Scene.root.findFirst('sps')
     const deleteButton = await Scene.root.findFirst('delete')
@@ -201,6 +231,135 @@ import {blockOfStrings} from './block'
         B.outputPatches(textObject, counterObject)
     });
 
+    //доп символы
+
+    await TouchGestures.onTap(tire).subscribe(() => {
+        B.block[B.blockNumber].touch("-", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(apostrof).subscribe(() => {
+        B.block[B.blockNumber].touch("'", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(vopros).subscribe(() => {
+        B.block[B.blockNumber].touch("?", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(dvoetochie).subscribe(() => {
+        B.block[B.blockNumber].touch(":", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(tri).subscribe(() => {
+        B.block[B.blockNumber].touch("3", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(tochkazapataya).subscribe(() => {
+        B.block[B.blockNumber].touch(";", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(ckobka1).subscribe(() => {
+        B.block[B.blockNumber].touch("(", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(ckobka2).subscribe(() => {
+        B.block[B.blockNumber].touch(")", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(vosem).subscribe(() => {
+        B.block[B.blockNumber].touch("8", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(dollar).subscribe(() => {
+        B.block[B.blockNumber].touch("$", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(and).subscribe(() => {
+        B.block[B.blockNumber].touch("&", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(ad).subscribe(() => {
+        B.block[B.blockNumber].touch("@", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(ravno).subscribe(() => {
+        B.block[B.blockNumber].touch("=", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(devyat).subscribe(() => {
+        B.block[B.blockNumber].touch("9", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(nol).subscribe(() => {
+        B.block[B.blockNumber].touch("0", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(odin).subscribe(() => {
+        B.block[B.blockNumber].touch("1", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(chetyre).subscribe(() => {
+        B.block[B.blockNumber].touch("4", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(slash).subscribe(() => {
+        B.block[B.blockNumber].touch("/", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(pyat).subscribe(() => {
+        B.block[B.blockNumber].touch("5", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(sem).subscribe(() => {
+        B.block[B.blockNumber].touch("7", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(vosklitsatelnyi).subscribe(() => {
+        B.block[B.blockNumber].touch("!", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(dva).subscribe(() => {
+        B.block[B.blockNumber].touch("2", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(shest).subscribe(() => {
+        B.block[B.blockNumber].touch("6", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(zapataya).subscribe(() => {
+        B.block[B.blockNumber].touch(",", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    await TouchGestures.onTap(plys).subscribe(() => {
+        B.block[B.blockNumber].touch("+", textObject, counterObject)
+        B.outputPatches(textObject, counterObject)
+    });
+
+    //конец
+
     await TouchGestures.onTap(whiteSpaceButton).subscribe(() => {
         B.block[B.blockNumber].whiteSpace(textObject, counterObject)
         B.outputPatches(textObject, counterObject)
@@ -217,7 +376,7 @@ import {blockOfStrings} from './block'
     });
 
     await TouchGestures.onTap(dot).subscribe(() => {
-        B.block[B.blockNumber].touch(",", textObject, counterObject)
+        B.block[B.blockNumber].touch(".", textObject, counterObject)
         B.outputPatches(textObject, counterObject)
     });
 
