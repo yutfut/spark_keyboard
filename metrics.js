@@ -1,6 +1,6 @@
 const Diagnostics = require('Diagnostics');
 
-const debug = true
+const debug = false
 
 export function printString(text, counterSymbol) {
     if (debug) {
